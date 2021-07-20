@@ -21,18 +21,6 @@ import xdrlib
 from . import exceptions, messages
 from .tools import expect
 
-# Memo types
-MEMO_TYPE_NONE = 0
-MEMO_TYPE_TEXT = 1
-MEMO_TYPE_ID = 2
-MEMO_TYPE_HASH = 3
-MEMO_TYPE_RETURN = 4
-
-# Asset types
-ASSET_TYPE_NATIVE = 0
-ASSET_TYPE_ALPHA4 = 1
-ASSET_TYPE_ALPHA12 = 2
-
 # Operations
 OP_CREATE_ACCOUNT = 0
 OP_PAYMENT = 1
@@ -111,13 +99,13 @@ def parse_transaction_bytes(tx_bytes):
     tx.memo_type = unpacker.unpack_uint()
 
     # text
-    if tx.memo_type == MEMO_TYPE_TEXT:
+    if tx.memo_type == messages.StellarMemoType.TEXT:
         tx.memo_text = unpacker.unpack_string().decode()
     # id (64-bit uint)
-    if tx.memo_type == MEMO_TYPE_ID:
+    if tx.memo_type == messages.StellarMemoType.ID:
         tx.memo_id = unpacker.unpack_uhyper()
     # hash / return are the same structure (32 bytes representing a hash)
-    if tx.memo_type == MEMO_TYPE_HASH or tx.memo_type == MEMO_TYPE_RETURN:
+    if tx.memo_type in (messages.StellarMemoType.HASH, messages.StellarMemoType.RETURN):
         tx.memo_hash = unpacker.unpack_fopaque(32)
 
     tx.num_operations = unpacker.unpack_uint()
@@ -252,9 +240,9 @@ def _parse_operation_bytes(unpacker):
             asset_type=unpacker.unpack_uint(),
         )
 
-        if op.asset_type == ASSET_TYPE_ALPHA4:
+        if op.asset_type == messages.StellarAssetType.ALPHANUM4:
             op.asset_code = unpacker.unpack_fstring(4).decode()
-        if op.asset_type == ASSET_TYPE_ALPHA12:
+        elif op.asset_type == messages.StellarAssetType.ALPHANUM12:
             op.asset_code = unpacker.unpack_fstring(12).decode()
 
         op.is_authorized = unpacker.unpack_bool()
@@ -292,13 +280,13 @@ def _parse_operation_bytes(unpacker):
 
 def _xdr_read_asset(unpacker):
     """Reads a stellar Asset from unpacker"""
-    asset = messages.StellarAssetType(type=unpacker.unpack_uint())
+    asset = messages.StellarAsset(type=unpacker.unpack_uint())
 
-    if asset.type == ASSET_TYPE_ALPHA4:
+    if asset.type == messages.StellarAssetType.ALPHANUM4:
         asset.code = unpacker.unpack_fstring(4).decode()
         asset.issuer = _xdr_read_address(unpacker)
 
-    if asset.type == ASSET_TYPE_ALPHA12:
+    if asset.type == messages.StellarAssetType.ALPHANUM12:
         asset.code = unpacker.unpack_fstring(12).decode()
         asset.issuer = _xdr_read_address(unpacker)
 
