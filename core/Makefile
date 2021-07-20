@@ -110,6 +110,7 @@ mypy:
 		src/apps/bitcoin \
 		src/apps/cardano \
 		src/apps/misc \
+		src/apps/stellar \
 		src/apps/webauthn
 
 ## code generation:

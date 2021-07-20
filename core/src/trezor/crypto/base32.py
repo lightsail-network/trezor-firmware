@@ -1,4 +1,4 @@
-# Base32 implementation taken from the micropython-lib's base64 module
+# Base32 implementation taken from the micropython-lib'data base64 module
 # https://github.com/micropython/micropython-lib/blob/master/base64/base64.py
 #
 
@@ -53,17 +53,17 @@ def encode(s: bytes) -> str:
 
 
 def decode(s: str) -> bytes:
-    s = s.encode()
-    quanta, leftover = divmod(len(s), 8)
+    data = s.encode()
+    quanta, leftover = divmod(len(data), 8)
     if leftover:
         raise ValueError("Incorrect padding")
     # Strip off pad characters from the right.  We need to count the pad
     # characters because this will tell us how many null bytes to remove from
     # the end of the decoded string.
-    padchars = s.find(b"=")
+    padchars = data.find(b"=")
     if padchars > 0:
-        padchars = len(s) - padchars
-        s = s[:-padchars]
+        padchars = len(data) - padchars
+        data = data[:-padchars]
     else:
         padchars = 0
 
@@ -71,7 +71,7 @@ def decode(s: str) -> bytes:
     parts = []
     acc = 0
     shift = 35
-    for c in s:
+    for c in data:
         val = _b32rev.get(c)
         if val is None:
             raise ValueError("Non-base32 digit found")
