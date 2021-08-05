@@ -99,13 +99,13 @@ message StellarCreateAccountOp {
  * @next StellarSignedTx
  */
 message StellarPathPaymentOp {
-    optional string source_account = 1;         // (optional) source address
-    optional StellarAssetType send_asset = 2;
-    optional sint64 send_max = 3;
-    optional string destination_account = 4;
-    optional StellarAssetType destination_asset = 5;
-    optional sint64 destination_amount = 6;
-    repeated StellarAssetType paths = 7;
+    optional string source_account = 1;                // (optional) source address
+    optional StellarAssetType send_asset = 2;          // asset we pay with
+    optional sint64 send_max = 3;                      // the maximum amount of send_asset to send (excluding fees), the operation will fail if can't be met
+    optional string destination_account = 4;           // recipient of the payment
+    optional StellarAssetType destination_asset = 5;   // what they end up with
+    optional sint64 destination_amount = 6;            // amount they end up with
+    repeated StellarAssetType paths = 7;               // additional hops it must go through to get there
 }
 
 /**
@@ -117,7 +117,7 @@ message StellarManageOfferOp {
     optional string source_account = 1;             // (optional) source account address
     optional StellarAssetType selling_asset = 2;
     optional StellarAssetType buying_asset = 3;
-    optional sint64 amount = 4;
+    optional sint64 amount = 4;                     // amount being sold. if set to 0, delete the offer
     optional uint32 price_n = 5;                    // Price numerator
     optional uint32 price_d = 6;                    // Price denominator
     optional uint64 offer_id = 7;                   // Offer ID for updating an existing offer
@@ -132,7 +132,7 @@ message StellarCreatePassiveOfferOp {
     optional string source_account = 1;             // (optional) source account address
     optional StellarAssetType selling_asset = 2;
     optional StellarAssetType buying_asset = 3;
-    optional sint64 amount = 4;
+    optional sint64 amount = 4;                     // amount taker gets. if set to 0, delete the offer
     optional uint32 price_n = 5;                    // Price numerator
     optional uint32 price_d = 6;                    // Price denominator
 }
@@ -145,13 +145,15 @@ message StellarCreatePassiveOfferOp {
 message StellarSetOptionsOp {
     optional string source_account = 1;                 // (optional) source account address
     optional string inflation_destination_account = 2;  // (optional) inflation destination address
-    optional uint32 clear_flags = 3;
-    optional uint32 set_flags = 4;
-    optional uint32 master_weight = 5;
+    optional uint32 clear_flags = 3;                    // (optional) which flags to clear
+    optional uint32 set_flags = 4;                      // (optional) which flags to set
+    // account threshold manipulation
+    optional uint32 master_weight = 5;                  // (optional) weight of the master account
     optional uint32 low_threshold = 6;
     optional uint32 medium_threshold = 7;
     optional uint32 high_threshold = 8;
-    optional string home_domain = 9;
+    optional string home_domain = 9;                    // (optional) sets the home domain
+    // Add, update or remove a signer for the account
     optional uint32 signer_type = 10;
     optional bytes signer_key = 11;
     optional uint32 signer_weight = 12;
@@ -165,7 +167,7 @@ message StellarSetOptionsOp {
 message StellarChangeTrustOp {
     optional string source_account = 1;     // (optional) source account address
     optional StellarAssetType asset = 2;
-    optional uint64 limit = 3;
+    optional uint64 limit = 3;              // if limit is set to 0, deletes the trust line
 }
 
 /**
