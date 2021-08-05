@@ -221,10 +221,20 @@ enum MessageType {
     MessageType_StellarChangeTrustOp = 216 [(wire_in) = true];
     MessageType_StellarAllowTrustOp = 217 [(wire_in) = true];
     MessageType_StellarAccountMergeOp = 218 [(wire_in) = true];
-    // omitted: StellarInflationOp is not a supported operation, would be 219
+    MessageType_StellarInflationOp = 219 [(wire_in) = true];
     MessageType_StellarManageDataOp = 220 [(wire_in) = true];
     MessageType_StellarBumpSequenceOp = 221 [(wire_in) = true];
+    MessageType_StellarManageBuyOfferOp = 222 [(wire_in) = true];
+    MessageType_StellarPathPaymentStrictSendOp = 223 [(wire_in) = true];
+    MessageType_StellarCreateClaimableBalanceOp = 224 [(wire_in) = true];
+    MessageType_StellarClaimClaimableBalanceOp = 225 [(wire_in) = true];
+    MessageType_StellarBeginSponsoringFutureReservesOp = 226 [(wire_in) = true];
+    MessageType_StellarEndSponsoringFutureReservesOp = 227 [(wire_in) = true];
+    MessageType_StellarRevokeSponsorshipOp = 228 [(wire_in) = true];
+    MessageType_StellarClawbackOp = 229 [(wire_in) = true];
     MessageType_StellarSignedTx = 230 [(wire_out) = true];
+    MessageType_StellarClawbackClaimableBalanceOp = 240 [(wire_in) = true];
+    MessageType_StellarSetTrustLineFlagsOp = 241 [(wire_in) = true];
 
     // Cardano
     // dropped Sign/VerifyMessage ids 300-302

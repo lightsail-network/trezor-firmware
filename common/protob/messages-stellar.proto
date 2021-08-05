@@ -66,6 +66,17 @@ message StellarSignTx {
  * @next StellarAccountMergeOp
  * @next StellarManageDataOp
  * @next StellarBumpSequenceOp
+ * @next StellarInflationOp
+ * @next StellarManageBuyOfferOp
+ * @next StellarPathPaymentStrictSendOp
+ * @next StellarCreateClaimableBalanceOp
+ * @next StellarClaimClaimableBalanceOp
+ * @next StellarBeginSponsoringFutureReservesOp
+ * @next StellarEndSponsoringFutureReservesOp
+ * @next StellarRevokeSponsorshipOp
+ * @next StellarClawbackOp
+ * @next StellarClawbackClaimableBalanceOp
+ * @next StellarSetTrustLineFlagsOp
  */
 message StellarTxOpRequest {
 }
@@ -97,6 +108,7 @@ message StellarCreateAccountOp {
  * Request: ask device to confirm this operation type
  * @next StellarTxOpRequest
  * @next StellarSignedTx
+ * TODO: PathPaymentStrictReceive
  */
 message StellarPathPaymentOp {
     optional string source_account = 1;                // (optional) source address
@@ -112,6 +124,7 @@ message StellarPathPaymentOp {
  * Request: ask device to confirm this operation type
  * @next StellarTxOpRequest
  * @next StellarSignedTx
+ * TODO: ManageSellOfferOp
  */
 message StellarManageOfferOp {
     optional string source_account = 1;             // (optional) source account address
@@ -127,6 +140,7 @@ message StellarManageOfferOp {
  * Request: ask device to confirm this operation type
  * @next StellarTxOpRequest
  * @next StellarSignedTx
+ * TODO: CreatePassiveSellOfferOp
  */
 message StellarCreatePassiveOfferOp {
     optional string source_account = 1;             // (optional) source account address
@@ -212,6 +226,127 @@ message StellarManageDataOp {
 message StellarBumpSequenceOp {
     optional string source_account = 1; // (optional) source account address
     optional uint64 bump_to = 2;        // new sequence number
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarInflationOp {
+    optional string source_account = 1; // (optional) source account address
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarManageBuyOfferOp {
+    optional string source_account = 1;             // (optional) source account address
+    optional StellarAssetType selling_asset = 2;
+    optional StellarAssetType buying_asset = 3;
+    optional sint64 buy_amount = 4;                 // amount being bought. if set to 0, delete the offer
+    optional uint32 price_n = 5;                    // Price numerator
+    optional uint32 price_d = 6;                    // Price denominator
+    optional uint64 offer_id = 7;                   // Offer ID for updating an existing offer
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarPathPaymentStrictSendOp {
+    optional string source_account = 1;               // (optional) source address
+    optional StellarAssetType send_asset = 2;         // asset we pay with
+    optional sint64 send_amount = 3;                  // amount of sendAsset to send (excluding fees)
+    optional string destination_account = 4;          // recipient of the payment
+    optional StellarAssetType destination_asset = 5;  // what they end up with
+    optional sint64 destination_min = 6;              // the minimum amount of dest asset to be received, the operation will fail if it can't be met
+    repeated StellarAssetType paths = 7;              // additional hops it must go through to get there
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarCreateClaimableBalanceOp {
+    optional string source_account = 1; // (optional) source account address
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarClaimClaimableBalanceOp {
+    optional string source_account = 1; // (optional) source account address
+    optional string balance_id = 2;
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarBeginSponsoringFutureReservesOp {
+    optional string source_account = 1; // (optional) source account address
+    optional string sponsored_id = 2;
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarEndSponsoringFutureReservesOp {
+    optional string source_account = 1; // (optional) source account address
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarRevokeSponsorshipOp {
+    optional string source_account = 1; // (optional) source account address
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarClawbackOp {
+    optional string source_account = 1; // (optional) source account address
+    optional StellarAssetType asset = 2;
+    optional string from = 3;
+    optional sint64 amount = 4;
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarClawbackClaimableBalanceOp {
+    optional string source_account = 1; // (optional) source account address
+    optional string balance_id = 2;
+}
+
+/**
+ * Request: ask device to confirm this operation type
+ * @next StellarTxOpRequest
+ * @next StellarSignedTx
+ */
+message StellarSetTrustLineFlagsOp {
+    optional string source_account = 1; // (optional) source account address
+    optional string trustor = 2;
+    optional StellarAssetType asset = 3;
+    optional uint32 clear_flags = 4;
+    optional uint32 set_flags = 5;
 }
 
 /**
