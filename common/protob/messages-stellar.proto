@@ -71,6 +71,12 @@ message StellarSignTxV1 {
     optional string network_passphrase = 2; // passphrase for signing messages on the destination network
 }
 
+message StellarTxV0Request {
+}
+
+message StellarTxV1Request {
+}
+
 /**
  * Request: ask device to sign Stellar transaction
  * @start

@@ -208,15 +208,20 @@ enum MessageType {
     MessageType_TezosPublicKey = 155 [(wire_out) = true];
 
     // Stellar
-    MessageType_StellarSignTx = 202 [(wire_in) = true];
-    MessageType_StellarTxOpRequest = 203 [(wire_out) = true];
-    MessageType_StellarGetAddress = 207 [(wire_in) = true];
-    MessageType_StellarAddress = 208 [(wire_out) = true];
+    MessageType_StellarGetAddress = 200 [(wire_in) = true];
+    MessageType_StellarAddress = 201 [(wire_out) = true];
+    MessageType_StellarSignTxV0 = 202 [(wire_in) = true];
+    MessageType_StellarSignTxV1 = 203 [(wire_in) = true];
+    MessageType_StellarTxV0Request = 204 [(wire_out) = true];
+    MessageType_StellarTxV1Request = 205 [(wire_out) = true];
+    MessageType_StellarTxV0 = 206 [(wire_in) = true];
+    MessageType_StellarTxV1 = 207 [(wire_in) = true];
+    MessageType_StellarTxOpRequest = 208 [(wire_out) = true];
     MessageType_StellarCreateAccountOp = 210 [(wire_in) = true];
     MessageType_StellarPaymentOp = 211 [(wire_in) = true];
-    MessageType_StellarPathPaymentOp = 212 [(wire_in) = true];
-    MessageType_StellarManageOfferOp = 213 [(wire_in) = true];
-    MessageType_StellarCreatePassiveOfferOp = 214 [(wire_in) = true];
+    MessageType_StellarPathPaymentStrictReceive = 212 [(wire_in) = true];
+    MessageType_StellarManageSellOfferOp = 213 [(wire_in) = true];
+    MessageType_StellarCreatePassiveSellOfferOp = 214 [(wire_in) = true];
     MessageType_StellarSetOptionsOp = 215 [(wire_in) = true];
     MessageType_StellarChangeTrustOp = 216 [(wire_in) = true];
     MessageType_StellarAllowTrustOp = 217 [(wire_in) = true];

@@ -4564,7 +4564,7 @@ if TYPE_CHECKING:
         def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["RipplePayment"]:
             return isinstance(msg, cls)
 
-    class StellarAssetType(protobuf.MessageType):
+    class StellarAsset(protobuf.MessageType):
         type: "int"
         code: "str | None"
         issuer: "str | None"
@@ -4579,7 +4579,79 @@ if TYPE_CHECKING:
             pass
 
         @classmethod
-        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarAssetType"]:
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarAsset"]:
+            return isinstance(msg, cls)
+
+    class StellarTimeBounds(protobuf.MessageType):
+        min_time: "int"
+        max_time: "int"
+
+        def __init__(
+            self,
+            *,
+            min_time: "int",
+            max_time: "int",
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarTimeBounds"]:
+            return isinstance(msg, cls)
+
+    class Price(protobuf.MessageType):
+        n: "int"
+        d: "int"
+
+        def __init__(
+            self,
+            *,
+            n: "int",
+            d: "int",
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["Price"]:
+            return isinstance(msg, cls)
+
+    class StellarMemo(protobuf.MessageType):
+        memo_type: "int"
+        memo_text: "str | None"
+        memo_id: "int | None"
+        memo_hash: "bytes | None"
+        memo_return_hash: "bytes | None"
+
+        def __init__(
+            self,
+            *,
+            memo_type: "int",
+            memo_text: "str | None" = None,
+            memo_id: "int | None" = None,
+            memo_hash: "bytes | None" = None,
+            memo_return_hash: "bytes | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarMemo"]:
+            return isinstance(msg, cls)
+
+    class StellarMuxedAccount(protobuf.MessageType):
+        crypto_key_type: "int"
+        ed25519_account: "str | None"
+        muxed_id: "int | None"
+
+        def __init__(
+            self,
+            *,
+            crypto_key_type: "int",
+            ed25519_account: "str | None" = None,
+            muxed_id: "int | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarMuxedAccount"]:
             return isinstance(msg, cls)
 
     class StellarGetAddress(protobuf.MessageType):
@@ -4612,40 +4684,96 @@ if TYPE_CHECKING:
         def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarAddress"]:
             return isinstance(msg, cls)
 
-    class StellarSignTx(protobuf.MessageType):
+    class StellarSignTxV0(protobuf.MessageType):
         address_n: "list[int]"
         network_passphrase: "str | None"
-        source_account: "str | None"
-        fee: "int | None"
-        sequence_number: "int | None"
-        timebounds_start: "int | None"
-        timebounds_end: "int | None"
-        memo_type: "int | None"
-        memo_text: "str | None"
-        memo_id: "int | None"
-        memo_hash: "bytes | None"
-        num_operations: "int | None"
 
         def __init__(
             self,
             *,
             address_n: "list[int] | None" = None,
             network_passphrase: "str | None" = None,
-            source_account: "str | None" = None,
-            fee: "int | None" = None,
-            sequence_number: "int | None" = None,
-            timebounds_start: "int | None" = None,
-            timebounds_end: "int | None" = None,
-            memo_type: "int | None" = None,
-            memo_text: "str | None" = None,
-            memo_id: "int | None" = None,
-            memo_hash: "bytes | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarSignTxV0"]:
+            return isinstance(msg, cls)
+
+    class StellarSignTxV1(protobuf.MessageType):
+        address_n: "list[int]"
+        network_passphrase: "str | None"
+
+        def __init__(
+            self,
+            *,
+            address_n: "list[int] | None" = None,
+            network_passphrase: "str | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarSignTxV1"]:
+            return isinstance(msg, cls)
+
+    class StellarTxV0Request(protobuf.MessageType):
+
+        @classmethod
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarTxV0Request"]:
+            return isinstance(msg, cls)
+
+    class StellarTxV1Request(protobuf.MessageType):
+
+        @classmethod
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarTxV1Request"]:
+            return isinstance(msg, cls)
+
+    class StellarTxV0(protobuf.MessageType):
+        source_account: "str"
+        fee: "int"
+        sequence_number: "int"
+        time_bounds: "StellarTimeBounds | None"
+        memo: "StellarMemo"
+        num_operations: "int | None"
+
+        def __init__(
+            self,
+            *,
+            source_account: "str",
+            fee: "int",
+            sequence_number: "int",
+            memo: "StellarMemo",
+            time_bounds: "StellarTimeBounds | None" = None,
             num_operations: "int | None" = None,
         ) -> None:
             pass
 
         @classmethod
-        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarSignTx"]:
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarTxV0"]:
+            return isinstance(msg, cls)
+
+    class StellarTxV1(protobuf.MessageType):
+        source_account: "StellarMuxedAccount"
+        fee: "int"
+        sequence_number: "int"
+        time_bounds: "StellarTimeBounds | None"
+        memo: "StellarMemo"
+        num_operations: "int | None"
+
+        def __init__(
+            self,
+            *,
+            source_account: "StellarMuxedAccount",
+            fee: "int",
+            sequence_number: "int",
+            memo: "StellarMemo",
+            time_bounds: "StellarTimeBounds | None" = None,
+            num_operations: "int | None" = None,
+        ) -> None:
+            pass
+
+        @classmethod
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarTxV1"]:
             return isinstance(msg, cls)
 
     class StellarTxOpRequest(protobuf.MessageType):
@@ -4655,18 +4783,18 @@ if TYPE_CHECKING:
             return isinstance(msg, cls)
 
     class StellarPaymentOp(protobuf.MessageType):
-        source_account: "str | None"
-        destination_account: "str | None"
-        asset: "StellarAssetType | None"
-        amount: "int | None"
+        source_account: "StellarMuxedAccount | None"
+        destination_account: "StellarMuxedAccount"
+        asset: "StellarAsset"
+        amount: "int"
 
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
-            destination_account: "str | None" = None,
-            asset: "StellarAssetType | None" = None,
-            amount: "int | None" = None,
+            destination_account: "StellarMuxedAccount",
+            asset: "StellarAsset",
+            amount: "int",
+            source_account: "StellarMuxedAccount | None" = None,
         ) -> None:
             pass
 
@@ -4675,16 +4803,16 @@ if TYPE_CHECKING:
             return isinstance(msg, cls)
 
     class StellarCreateAccountOp(protobuf.MessageType):
-        source_account: "str | None"
-        new_account: "str | None"
-        starting_balance: "int | None"
+        source_account: "StellarMuxedAccount | None"
+        new_account: "str"
+        starting_balance: "int"
 
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
-            new_account: "str | None" = None,
-            starting_balance: "int | None" = None,
+            new_account: "str",
+            starting_balance: "int",
+            source_account: "StellarMuxedAccount | None" = None,
         ) -> None:
             pass
 
@@ -4692,84 +4820,80 @@ if TYPE_CHECKING:
         def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarCreateAccountOp"]:
             return isinstance(msg, cls)
 
-    class StellarPathPaymentOp(protobuf.MessageType):
-        source_account: "str | None"
-        send_asset: "StellarAssetType | None"
-        send_max: "int | None"
-        destination_account: "str | None"
-        destination_asset: "StellarAssetType | None"
-        destination_amount: "int | None"
-        paths: "list[StellarAssetType]"
+    class StellarPathPaymentStrictReceive(protobuf.MessageType):
+        source_account: "StellarMuxedAccount | None"
+        send_asset: "StellarAsset"
+        send_max: "int"
+        destination_account: "StellarMuxedAccount"
+        destination_asset: "StellarAsset"
+        destination_amount: "int"
+        paths: "list[StellarAsset]"
 
         def __init__(
             self,
             *,
-            paths: "list[StellarAssetType] | None" = None,
-            source_account: "str | None" = None,
-            send_asset: "StellarAssetType | None" = None,
-            send_max: "int | None" = None,
-            destination_account: "str | None" = None,
-            destination_asset: "StellarAssetType | None" = None,
-            destination_amount: "int | None" = None,
+            send_asset: "StellarAsset",
+            send_max: "int",
+            destination_account: "StellarMuxedAccount",
+            destination_asset: "StellarAsset",
+            destination_amount: "int",
+            paths: "list[StellarAsset] | None" = None,
+            source_account: "StellarMuxedAccount | None" = None,
         ) -> None:
             pass
 
         @classmethod
-        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarPathPaymentOp"]:
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarPathPaymentStrictReceive"]:
             return isinstance(msg, cls)
 
-    class StellarManageOfferOp(protobuf.MessageType):
-        source_account: "str | None"
-        selling_asset: "StellarAssetType | None"
-        buying_asset: "StellarAssetType | None"
-        amount: "int | None"
-        price_n: "int | None"
-        price_d: "int | None"
-        offer_id: "int | None"
+    class StellarManageSellOfferOp(protobuf.MessageType):
+        source_account: "StellarMuxedAccount | None"
+        selling_asset: "StellarAsset"
+        buying_asset: "StellarAsset"
+        amount: "int"
+        price: "Price"
+        offer_id: "int"
 
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
-            selling_asset: "StellarAssetType | None" = None,
-            buying_asset: "StellarAssetType | None" = None,
-            amount: "int | None" = None,
-            price_n: "int | None" = None,
-            price_d: "int | None" = None,
-            offer_id: "int | None" = None,
+            selling_asset: "StellarAsset",
+            buying_asset: "StellarAsset",
+            amount: "int",
+            price: "Price",
+            offer_id: "int",
+            source_account: "StellarMuxedAccount | None" = None,
         ) -> None:
             pass
 
         @classmethod
-        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarManageOfferOp"]:
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarManageSellOfferOp"]:
             return isinstance(msg, cls)
 
-    class StellarCreatePassiveOfferOp(protobuf.MessageType):
-        source_account: "str | None"
-        selling_asset: "StellarAssetType | None"
-        buying_asset: "StellarAssetType | None"
-        amount: "int | None"
-        price_n: "int | None"
-        price_d: "int | None"
+    class StellarCreatePassiveSellOfferOp(protobuf.MessageType):
+        source_account: "StellarMuxedAccount | None"
+        selling_asset: "StellarAsset"
+        buying_asset: "StellarAsset"
+        amount: "int"
+        price: "Price"
 
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
-            selling_asset: "StellarAssetType | None" = None,
-            buying_asset: "StellarAssetType | None" = None,
-            amount: "int | None" = None,
-            price_n: "int | None" = None,
-            price_d: "int | None" = None,
+            selling_asset: "StellarAsset",
+            buying_asset: "StellarAsset",
+            amount: "int",
+            price: "Price",
+            source_account: "StellarMuxedAccount | None" = None,
         ) -> None:
             pass
 
         @classmethod
-        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarCreatePassiveOfferOp"]:
+        def is_type_of(cls, msg: protobuf.MessageType) -> TypeGuard["StellarCreatePassiveSellOfferOp"]:
             return isinstance(msg, cls)
 
     class StellarSetOptionsOp(protobuf.MessageType):
-        source_account: "str | None"
+        source_account: "StellarMuxedAccount | None"
         inflation_destination_account: "str | None"
         clear_flags: "int | None"
         set_flags: "int | None"
@@ -4785,7 +4909,7 @@ if TYPE_CHECKING:
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
+            source_account: "StellarMuxedAccount | None" = None,
             inflation_destination_account: "str | None" = None,
             clear_flags: "int | None" = None,
             set_flags: "int | None" = None,
@@ -4805,16 +4929,16 @@ if TYPE_CHECKING:
             return isinstance(msg, cls)
 
     class StellarChangeTrustOp(protobuf.MessageType):
-        source_account: "str | None"
-        asset: "StellarAssetType | None"
-        limit: "int | None"
+        source_account: "StellarMuxedAccount | None"
+        asset: "StellarAsset"
+        limit: "int"
 
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
-            asset: "StellarAssetType | None" = None,
-            limit: "int | None" = None,
+            asset: "StellarAsset",
+            limit: "int",
+            source_account: "StellarMuxedAccount | None" = None,
         ) -> None:
             pass
 
@@ -4823,20 +4947,20 @@ if TYPE_CHECKING:
             return isinstance(msg, cls)
 
     class StellarAllowTrustOp(protobuf.MessageType):
-        source_account: "str | None"
-        trusted_account: "str | None"
-        asset_type: "int | None"
-        asset_code: "str | None"
-        is_authorized: "int | None"
+        source_account: "StellarMuxedAccount | None"
+        trusted_account: "str"
+        asset_type: "int"
+        asset_code: "str"
+        authorize: "int"
 
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
-            trusted_account: "str | None" = None,
-            asset_type: "int | None" = None,
-            asset_code: "str | None" = None,
-            is_authorized: "int | None" = None,
+            trusted_account: "str",
+            asset_type: "int",
+            asset_code: "str",
+            authorize: "int",
+            source_account: "StellarMuxedAccount | None" = None,
         ) -> None:
             pass
 
@@ -4845,14 +4969,14 @@ if TYPE_CHECKING:
             return isinstance(msg, cls)
 
     class StellarAccountMergeOp(protobuf.MessageType):
-        source_account: "str | None"
-        destination_account: "str | None"
+        source_account: "StellarMuxedAccount | None"
+        destination_account: "StellarMuxedAccount"
 
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
-            destination_account: "str | None" = None,
+            destination_account: "StellarMuxedAccount",
+            source_account: "StellarMuxedAccount | None" = None,
         ) -> None:
             pass
 
@@ -4861,15 +4985,15 @@ if TYPE_CHECKING:
             return isinstance(msg, cls)
 
     class StellarManageDataOp(protobuf.MessageType):
-        source_account: "str | None"
-        key: "str | None"
+        source_account: "StellarMuxedAccount | None"
+        key: "str"
         value: "bytes | None"
 
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
-            key: "str | None" = None,
+            key: "str",
+            source_account: "StellarMuxedAccount | None" = None,
             value: "bytes | None" = None,
         ) -> None:
             pass
@@ -4879,14 +5003,14 @@ if TYPE_CHECKING:
             return isinstance(msg, cls)
 
     class StellarBumpSequenceOp(protobuf.MessageType):
-        source_account: "str | None"
-        bump_to: "int | None"
+        source_account: "StellarMuxedAccount | None"
+        bump_to: "int"
 
         def __init__(
             self,
             *,
-            source_account: "str | None" = None,
-            bump_to: "int | None" = None,
+            bump_to: "int",
+            source_account: "StellarMuxedAccount | None" = None,
         ) -> None:
             pass
 

@@ -143,15 +143,20 @@ class MessageType(IntEnum):
     TezosSignedTx = 153
     TezosGetPublicKey = 154
     TezosPublicKey = 155
-    StellarSignTx = 202
-    StellarTxOpRequest = 203
-    StellarGetAddress = 207
-    StellarAddress = 208
+    StellarGetAddress = 200
+    StellarAddress = 201
+    StellarSignTxV0 = 202
+    StellarSignTxV1 = 203
+    StellarTxV0Request = 204
+    StellarTxV1Request = 205
+    StellarTxV0 = 206
+    StellarTxV1 = 207
+    StellarTxOpRequest = 208
     StellarCreateAccountOp = 210
     StellarPaymentOp = 211
-    StellarPathPaymentOp = 212
-    StellarManageOfferOp = 213
-    StellarCreatePassiveOfferOp = 214
+    StellarPathPaymentStrictReceive = 212
+    StellarManageSellOfferOp = 213
+    StellarCreatePassiveSellOfferOp = 214
     StellarSetOptionsOp = 215
     StellarChangeTrustOp = 216
     StellarAllowTrustOp = 217
@@ -5762,7 +5767,7 @@ class RipplePayment(protobuf.MessageType):
         self.destination_tag = destination_tag
 
 
-class StellarAssetType(protobuf.MessageType):
+class StellarAsset(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = None
     FIELDS = {
         1: protobuf.Field("type", "uint32", repeated=False, required=True),
@@ -5782,8 +5787,88 @@ class StellarAssetType(protobuf.MessageType):
         self.issuer = issuer
 
 
+class StellarTimeBounds(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("min_time", "uint64", repeated=False, required=True),
+        2: protobuf.Field("max_time", "uint64", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        min_time: "int",
+        max_time: "int",
+    ) -> None:
+        self.min_time = min_time
+        self.max_time = max_time
+
+
+class Price(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("n", "sint32", repeated=False, required=True),
+        2: protobuf.Field("d", "sint32", repeated=False, required=True),
+    }
+
+    def __init__(
+        self,
+        *,
+        n: "int",
+        d: "int",
+    ) -> None:
+        self.n = n
+        self.d = d
+
+
+class StellarMemo(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("memo_type", "uint32", repeated=False, required=True),
+        2: protobuf.Field("memo_text", "string", repeated=False, required=False),
+        3: protobuf.Field("memo_id", "uint64", repeated=False, required=False),
+        4: protobuf.Field("memo_hash", "bytes", repeated=False, required=False),
+        5: protobuf.Field("memo_return_hash", "bytes", repeated=False, required=False),
+    }
+
+    def __init__(
+        self,
+        *,
+        memo_type: "int",
+        memo_text: Optional["str"] = None,
+        memo_id: Optional["int"] = None,
+        memo_hash: Optional["bytes"] = None,
+        memo_return_hash: Optional["bytes"] = None,
+    ) -> None:
+        self.memo_type = memo_type
+        self.memo_text = memo_text
+        self.memo_id = memo_id
+        self.memo_hash = memo_hash
+        self.memo_return_hash = memo_return_hash
+
+
+class StellarMuxedAccount(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("crypto_key_type", "uint32", repeated=False, required=True),
+        2: protobuf.Field("ed25519_account", "string", repeated=False, required=False),
+        3: protobuf.Field("muxed_id", "uint64", repeated=False, required=False),
+    }
+
+    def __init__(
+        self,
+        *,
+        crypto_key_type: "int",
+        ed25519_account: Optional["str"] = None,
+        muxed_id: Optional["int"] = None,
+    ) -> None:
+        self.crypto_key_type = crypto_key_type
+        self.ed25519_account = ed25519_account
+        self.muxed_id = muxed_id
+
+
 class StellarGetAddress(protobuf.MessageType):
-    MESSAGE_WIRE_TYPE = 207
+    MESSAGE_WIRE_TYPE = 200
     FIELDS = {
         1: protobuf.Field("address_n", "uint32", repeated=True, required=False),
         2: protobuf.Field("show_display", "bool", repeated=False, required=False),
@@ -5800,7 +5885,7 @@ class StellarGetAddress(protobuf.MessageType):
 
 
 class StellarAddress(protobuf.MessageType):
-    MESSAGE_WIRE_TYPE = 208
+    MESSAGE_WIRE_TYPE = 201
     FIELDS = {
         1: protobuf.Field("address", "string", repeated=False, required=True),
     }
@@ -5813,21 +5898,11 @@ class StellarAddress(protobuf.MessageType):
         self.address = address
 
 
-class StellarSignTx(protobuf.MessageType):
+class StellarSignTxV0(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 202
     FIELDS = {
-        2: protobuf.Field("address_n", "uint32", repeated=True, required=False),
-        3: protobuf.Field("network_passphrase", "string", repeated=False, required=False),
-        4: protobuf.Field("source_account", "string", repeated=False, required=False),
-        5: protobuf.Field("fee", "uint32", repeated=False, required=False),
-        6: protobuf.Field("sequence_number", "uint64", repeated=False, required=False),
-        8: protobuf.Field("timebounds_start", "uint32", repeated=False, required=False),
-        9: protobuf.Field("timebounds_end", "uint32", repeated=False, required=False),
-        10: protobuf.Field("memo_type", "uint32", repeated=False, required=False),
-        11: protobuf.Field("memo_text", "string", repeated=False, required=False),
-        12: protobuf.Field("memo_id", "uint64", repeated=False, required=False),
-        13: protobuf.Field("memo_hash", "bytes", repeated=False, required=False),
-        14: protobuf.Field("num_operations", "uint32", repeated=False, required=False),
+        1: protobuf.Field("address_n", "uint32", repeated=True, required=False),
+        2: protobuf.Field("network_passphrase", "string", repeated=False, required=False),
     }
 
     def __init__(
@@ -5835,175 +5910,232 @@ class StellarSignTx(protobuf.MessageType):
         *,
         address_n: Optional[List["int"]] = None,
         network_passphrase: Optional["str"] = None,
-        source_account: Optional["str"] = None,
-        fee: Optional["int"] = None,
-        sequence_number: Optional["int"] = None,
-        timebounds_start: Optional["int"] = None,
-        timebounds_end: Optional["int"] = None,
-        memo_type: Optional["int"] = None,
-        memo_text: Optional["str"] = None,
-        memo_id: Optional["int"] = None,
-        memo_hash: Optional["bytes"] = None,
-        num_operations: Optional["int"] = None,
     ) -> None:
         self.address_n = address_n if address_n is not None else []
         self.network_passphrase = network_passphrase
+
+
+class StellarSignTxV1(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 203
+    FIELDS = {
+        1: protobuf.Field("address_n", "uint32", repeated=True, required=False),
+        2: protobuf.Field("network_passphrase", "string", repeated=False, required=False),
+    }
+
+    def __init__(
+        self,
+        *,
+        address_n: Optional[List["int"]] = None,
+        network_passphrase: Optional["str"] = None,
+    ) -> None:
+        self.address_n = address_n if address_n is not None else []
+        self.network_passphrase = network_passphrase
+
+
+class StellarTxV0Request(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 204
+
+
+class StellarTxV1Request(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 205
+
+
+class StellarTxV0(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 206
+    FIELDS = {
+        1: protobuf.Field("source_account", "string", repeated=False, required=True),
+        2: protobuf.Field("fee", "uint32", repeated=False, required=True),
+        3: protobuf.Field("sequence_number", "uint64", repeated=False, required=True),
+        4: protobuf.Field("time_bounds", "StellarTimeBounds", repeated=False, required=False),
+        5: protobuf.Field("memo", "StellarMemo", repeated=False, required=True),
+        6: protobuf.Field("num_operations", "uint32", repeated=False, required=False),
+    }
+
+    def __init__(
+        self,
+        *,
+        source_account: "str",
+        fee: "int",
+        sequence_number: "int",
+        memo: "StellarMemo",
+        time_bounds: Optional["StellarTimeBounds"] = None,
+        num_operations: Optional["int"] = None,
+    ) -> None:
         self.source_account = source_account
         self.fee = fee
         self.sequence_number = sequence_number
-        self.timebounds_start = timebounds_start
-        self.timebounds_end = timebounds_end
-        self.memo_type = memo_type
-        self.memo_text = memo_text
-        self.memo_id = memo_id
-        self.memo_hash = memo_hash
+        self.memo = memo
+        self.time_bounds = time_bounds
+        self.num_operations = num_operations
+
+
+class StellarTxV1(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = 207
+    FIELDS = {
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=True),
+        2: protobuf.Field("fee", "uint32", repeated=False, required=True),
+        3: protobuf.Field("sequence_number", "uint64", repeated=False, required=True),
+        4: protobuf.Field("time_bounds", "StellarTimeBounds", repeated=False, required=False),
+        5: protobuf.Field("memo", "StellarMemo", repeated=False, required=True),
+        6: protobuf.Field("num_operations", "uint32", repeated=False, required=False),
+    }
+
+    def __init__(
+        self,
+        *,
+        source_account: "StellarMuxedAccount",
+        fee: "int",
+        sequence_number: "int",
+        memo: "StellarMemo",
+        time_bounds: Optional["StellarTimeBounds"] = None,
+        num_operations: Optional["int"] = None,
+    ) -> None:
+        self.source_account = source_account
+        self.fee = fee
+        self.sequence_number = sequence_number
+        self.memo = memo
+        self.time_bounds = time_bounds
         self.num_operations = num_operations
 
 
 class StellarTxOpRequest(protobuf.MessageType):
-    MESSAGE_WIRE_TYPE = 203
+    MESSAGE_WIRE_TYPE = 208
 
 
 class StellarPaymentOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 211
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("destination_account", "string", repeated=False, required=False),
-        3: protobuf.Field("asset", "StellarAssetType", repeated=False, required=False),
-        4: protobuf.Field("amount", "sint64", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("destination_account", "StellarMuxedAccount", repeated=False, required=True),
+        3: protobuf.Field("asset", "StellarAsset", repeated=False, required=True),
+        4: protobuf.Field("amount", "sint64", repeated=False, required=True),
     }
 
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
-        destination_account: Optional["str"] = None,
-        asset: Optional["StellarAssetType"] = None,
-        amount: Optional["int"] = None,
+        destination_account: "StellarMuxedAccount",
+        asset: "StellarAsset",
+        amount: "int",
+        source_account: Optional["StellarMuxedAccount"] = None,
     ) -> None:
-        self.source_account = source_account
         self.destination_account = destination_account
         self.asset = asset
         self.amount = amount
+        self.source_account = source_account
 
 
 class StellarCreateAccountOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 210
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("new_account", "string", repeated=False, required=False),
-        3: protobuf.Field("starting_balance", "sint64", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("new_account", "string", repeated=False, required=True),
+        3: protobuf.Field("starting_balance", "sint64", repeated=False, required=True),
     }
 
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
-        new_account: Optional["str"] = None,
-        starting_balance: Optional["int"] = None,
+        new_account: "str",
+        starting_balance: "int",
+        source_account: Optional["StellarMuxedAccount"] = None,
     ) -> None:
-        self.source_account = source_account
         self.new_account = new_account
         self.starting_balance = starting_balance
+        self.source_account = source_account
 
 
-class StellarPathPaymentOp(protobuf.MessageType):
+class StellarPathPaymentStrictReceive(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 212
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("send_asset", "StellarAssetType", repeated=False, required=False),
-        3: protobuf.Field("send_max", "sint64", repeated=False, required=False),
-        4: protobuf.Field("destination_account", "string", repeated=False, required=False),
-        5: protobuf.Field("destination_asset", "StellarAssetType", repeated=False, required=False),
-        6: protobuf.Field("destination_amount", "sint64", repeated=False, required=False),
-        7: protobuf.Field("paths", "StellarAssetType", repeated=True, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("send_asset", "StellarAsset", repeated=False, required=True),
+        3: protobuf.Field("send_max", "sint64", repeated=False, required=True),
+        4: protobuf.Field("destination_account", "StellarMuxedAccount", repeated=False, required=True),
+        5: protobuf.Field("destination_asset", "StellarAsset", repeated=False, required=True),
+        6: protobuf.Field("destination_amount", "sint64", repeated=False, required=True),
+        7: protobuf.Field("paths", "StellarAsset", repeated=True, required=False),
     }
 
     def __init__(
         self,
         *,
-        paths: Optional[List["StellarAssetType"]] = None,
-        source_account: Optional["str"] = None,
-        send_asset: Optional["StellarAssetType"] = None,
-        send_max: Optional["int"] = None,
-        destination_account: Optional["str"] = None,
-        destination_asset: Optional["StellarAssetType"] = None,
-        destination_amount: Optional["int"] = None,
+        send_asset: "StellarAsset",
+        send_max: "int",
+        destination_account: "StellarMuxedAccount",
+        destination_asset: "StellarAsset",
+        destination_amount: "int",
+        paths: Optional[List["StellarAsset"]] = None,
+        source_account: Optional["StellarMuxedAccount"] = None,
     ) -> None:
         self.paths = paths if paths is not None else []
-        self.source_account = source_account
         self.send_asset = send_asset
         self.send_max = send_max
         self.destination_account = destination_account
         self.destination_asset = destination_asset
         self.destination_amount = destination_amount
+        self.source_account = source_account
 
 
-class StellarManageOfferOp(protobuf.MessageType):
+class StellarManageSellOfferOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 213
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("selling_asset", "StellarAssetType", repeated=False, required=False),
-        3: protobuf.Field("buying_asset", "StellarAssetType", repeated=False, required=False),
-        4: protobuf.Field("amount", "sint64", repeated=False, required=False),
-        5: protobuf.Field("price_n", "uint32", repeated=False, required=False),
-        6: protobuf.Field("price_d", "uint32", repeated=False, required=False),
-        7: protobuf.Field("offer_id", "uint64", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("selling_asset", "StellarAsset", repeated=False, required=True),
+        3: protobuf.Field("buying_asset", "StellarAsset", repeated=False, required=True),
+        4: protobuf.Field("amount", "sint64", repeated=False, required=True),
+        5: protobuf.Field("price", "Price", repeated=False, required=True),
+        6: protobuf.Field("offer_id", "uint64", repeated=False, required=True),
     }
 
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
-        selling_asset: Optional["StellarAssetType"] = None,
-        buying_asset: Optional["StellarAssetType"] = None,
-        amount: Optional["int"] = None,
-        price_n: Optional["int"] = None,
-        price_d: Optional["int"] = None,
-        offer_id: Optional["int"] = None,
+        selling_asset: "StellarAsset",
+        buying_asset: "StellarAsset",
+        amount: "int",
+        price: "Price",
+        offer_id: "int",
+        source_account: Optional["StellarMuxedAccount"] = None,
     ) -> None:
-        self.source_account = source_account
         self.selling_asset = selling_asset
         self.buying_asset = buying_asset
         self.amount = amount
-        self.price_n = price_n
-        self.price_d = price_d
+        self.price = price
         self.offer_id = offer_id
+        self.source_account = source_account
 
 
-class StellarCreatePassiveOfferOp(protobuf.MessageType):
+class StellarCreatePassiveSellOfferOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 214
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("selling_asset", "StellarAssetType", repeated=False, required=False),
-        3: protobuf.Field("buying_asset", "StellarAssetType", repeated=False, required=False),
-        4: protobuf.Field("amount", "sint64", repeated=False, required=False),
-        5: protobuf.Field("price_n", "uint32", repeated=False, required=False),
-        6: protobuf.Field("price_d", "uint32", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("selling_asset", "StellarAsset", repeated=False, required=True),
+        3: protobuf.Field("buying_asset", "StellarAsset", repeated=False, required=True),
+        4: protobuf.Field("amount", "sint64", repeated=False, required=True),
+        5: protobuf.Field("price", "Price", repeated=False, required=True),
     }
 
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
-        selling_asset: Optional["StellarAssetType"] = None,
-        buying_asset: Optional["StellarAssetType"] = None,
-        amount: Optional["int"] = None,
-        price_n: Optional["int"] = None,
-        price_d: Optional["int"] = None,
+        selling_asset: "StellarAsset",
+        buying_asset: "StellarAsset",
+        amount: "int",
+        price: "Price",
+        source_account: Optional["StellarMuxedAccount"] = None,
     ) -> None:
-        self.source_account = source_account
         self.selling_asset = selling_asset
         self.buying_asset = buying_asset
         self.amount = amount
-        self.price_n = price_n
-        self.price_d = price_d
+        self.price = price
+        self.source_account = source_account
 
 
 class StellarSetOptionsOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 215
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
         2: protobuf.Field("inflation_destination_account", "string", repeated=False, required=False),
         3: protobuf.Field("clear_flags", "uint32", repeated=False, required=False),
         4: protobuf.Field("set_flags", "uint32", repeated=False, required=False),
@@ -6020,7 +6152,7 @@ class StellarSetOptionsOp(protobuf.MessageType):
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
+        source_account: Optional["StellarMuxedAccount"] = None,
         inflation_destination_account: Optional["str"] = None,
         clear_flags: Optional["int"] = None,
         set_flags: Optional["int"] = None,
@@ -6050,101 +6182,101 @@ class StellarSetOptionsOp(protobuf.MessageType):
 class StellarChangeTrustOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 216
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("asset", "StellarAssetType", repeated=False, required=False),
-        3: protobuf.Field("limit", "uint64", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("asset", "StellarAsset", repeated=False, required=True),
+        3: protobuf.Field("limit", "uint64", repeated=False, required=True),
     }
 
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
-        asset: Optional["StellarAssetType"] = None,
-        limit: Optional["int"] = None,
+        asset: "StellarAsset",
+        limit: "int",
+        source_account: Optional["StellarMuxedAccount"] = None,
     ) -> None:
-        self.source_account = source_account
         self.asset = asset
         self.limit = limit
+        self.source_account = source_account
 
 
 class StellarAllowTrustOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 217
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("trusted_account", "string", repeated=False, required=False),
-        3: protobuf.Field("asset_type", "uint32", repeated=False, required=False),
-        4: protobuf.Field("asset_code", "string", repeated=False, required=False),
-        5: protobuf.Field("is_authorized", "uint32", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("trusted_account", "string", repeated=False, required=True),
+        3: protobuf.Field("asset_type", "uint32", repeated=False, required=True),
+        4: protobuf.Field("asset_code", "string", repeated=False, required=True),
+        5: protobuf.Field("authorize", "uint32", repeated=False, required=True),
     }
 
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
-        trusted_account: Optional["str"] = None,
-        asset_type: Optional["int"] = None,
-        asset_code: Optional["str"] = None,
-        is_authorized: Optional["int"] = None,
+        trusted_account: "str",
+        asset_type: "int",
+        asset_code: "str",
+        authorize: "int",
+        source_account: Optional["StellarMuxedAccount"] = None,
     ) -> None:
-        self.source_account = source_account
         self.trusted_account = trusted_account
         self.asset_type = asset_type
         self.asset_code = asset_code
-        self.is_authorized = is_authorized
+        self.authorize = authorize
+        self.source_account = source_account
 
 
 class StellarAccountMergeOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 218
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("destination_account", "string", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("destination_account", "StellarMuxedAccount", repeated=False, required=True),
     }
 
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
-        destination_account: Optional["str"] = None,
+        destination_account: "StellarMuxedAccount",
+        source_account: Optional["StellarMuxedAccount"] = None,
     ) -> None:
-        self.source_account = source_account
         self.destination_account = destination_account
+        self.source_account = source_account
 
 
 class StellarManageDataOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 220
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("key", "string", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("key", "string", repeated=False, required=True),
         3: protobuf.Field("value", "bytes", repeated=False, required=False),
     }
 
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
-        key: Optional["str"] = None,
+        key: "str",
+        source_account: Optional["StellarMuxedAccount"] = None,
         value: Optional["bytes"] = None,
     ) -> None:
-        self.source_account = source_account
         self.key = key
+        self.source_account = source_account
         self.value = value
 
 
 class StellarBumpSequenceOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 221
     FIELDS = {
-        1: protobuf.Field("source_account", "string", repeated=False, required=False),
-        2: protobuf.Field("bump_to", "uint64", repeated=False, required=False),
+        1: protobuf.Field("source_account", "StellarMuxedAccount", repeated=False, required=False),
+        2: protobuf.Field("bump_to", "uint64", repeated=False, required=True),
     }
 
     def __init__(
         self,
         *,
-        source_account: Optional["str"] = None,
-        bump_to: Optional["int"] = None,
+        bump_to: "int",
+        source_account: Optional["StellarMuxedAccount"] = None,
     ) -> None:
-        self.source_account = source_account
         self.bump_to = bump_to
+        self.source_account = source_account
 
 
 class StellarSignedTx(protobuf.MessageType):
