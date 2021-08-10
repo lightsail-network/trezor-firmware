@@ -2,7 +2,9 @@ from micropython import const
 
 from trezor.enums import MessageType
 
-TX_TYPE = bytearray("\x00\x00\x00\x02")
+TX_V0_TYPE = bytearray("\x00\x00\x00\x00")
+TX_V1_TYPE = bytearray("\x00\x00\x00\x02")
+TX_FEE_BUMP_TYPE = bytearray("\x00\x00\x00\x05")
 
 # source: https://github.com/stellar/go/blob/3d2c1defe73dbfed00146ebe0e8d7e07ce4bb1b6/xdr/Stellar-transaction.x#L16
 # Inflation not supported see https://github.com/trezor/trezor-core/issues/202#issuecomment-393342089

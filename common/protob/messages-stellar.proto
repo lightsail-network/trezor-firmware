@@ -23,8 +23,7 @@ message StellarTimeBounds {
 /**
  * price in fractional representation
  */
-message Price
-{
+message Price{
     required sint32 n = 1; // numerator
     required sint32 d = 2; // denominator
 };
@@ -34,7 +33,6 @@ message StellarMemo {
     optional string memo_text = 2;         // up to 28 characters (4 bytes are for length)
     optional uint64 memo_id = 3;           // 8-byte uint64
     optional bytes memo_hash = 4;          // 32 bytes representing a hash
-    optional bytes memo_return_hash = 5;   // 32 bytes representing a return hash
 }
 
 message StellarMuxedAccount {

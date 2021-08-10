@@ -1,3 +1,6 @@
+from trezor.messages import StellarMuxedAccount
+from trezor.wire import ProcessError
+
 from apps.common.writers import (
     write_bytes_fixed,
     write_bytes_unchecked,
@@ -39,3 +42,15 @@ def write_pubkey(w, address: str):
     # first 4 bytes of an address are the type, there's only one type (0)
     write_uint32(w, 0)
     write_bytes_fixed(w, public_key_from_address(address), 32)
+
+
+def write_muxed_account(w: bytearray, muxed_account: StellarMuxedAccount) -> None:
+    write_uint32(w, muxed_account.crypto_key_type)
+    if muxed_account.crypto_key_type == 0:
+        write_bytes_fixed(w, public_key_from_address(muxed_account.ed25519_account), 32)
+    elif muxed_account.crypto_key_type == 0x100:
+        write_uint64(w, muxed_account.muxed_id)
+        write_bytes_fixed(w, public_key_from_address(muxed_account.ed25519_account), 32)
+    else:
+        raise ProcessError("Stellar invalid crypto key type")
+
