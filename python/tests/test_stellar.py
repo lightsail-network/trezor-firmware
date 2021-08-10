@@ -959,6 +959,7 @@ def test_stellar_parse_operation_allow_trust_v0():
     assert parsed_operation.asset_type == stellar.ASSET_TYPE_ALPHA4
     assert parsed_operation.asset_code == asset_code
     assert parsed_operation.trusted_account == trustor
+    assert parsed_operation.is_authorized == TrustLineEntryFlag.AUTHORIZED_FLAG.value
 
 
 def test_stellar_parse_operation_account_merge_v0():
@@ -1994,6 +1995,7 @@ def test_stellar_parse_operation_allow_trust_v1():
     assert parsed_operation.asset_type == stellar.ASSET_TYPE_ALPHA4
     assert parsed_operation.asset_code == asset_code
     assert parsed_operation.trusted_account == trustor
+    assert parsed_operation.is_authorized == TrustLineEntryFlag.AUTHORIZED_FLAG.value
 
 
 def test_stellar_parse_operation_account_merge_v1():
