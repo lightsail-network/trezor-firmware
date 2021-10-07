@@ -125,6 +125,7 @@ if not utils.BITCOIN_ONLY:
     StellarManageDataOp = 220
     StellarBumpSequenceOp = 221
     StellarManageBuyOfferOp = 222
+    StellarPathPaymentStrictSendOp = 223
     StellarSignedTx = 230
     CardanoSignTx = 303
     CardanoGetPublicKey = 305
