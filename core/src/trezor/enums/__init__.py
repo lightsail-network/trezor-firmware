@@ -129,6 +129,7 @@ if TYPE_CHECKING:
         StellarAccountMergeOp = 218
         StellarManageDataOp = 220
         StellarBumpSequenceOp = 221
+        StellarManageBuyOfferOp = 222
         StellarSignedTx = 230
         CardanoSignTx = 303
         CardanoGetPublicKey = 305
