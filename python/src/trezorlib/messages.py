@@ -141,8 +141,8 @@ class MessageType(IntEnum):
     StellarAddress = 208
     StellarCreateAccountOp = 210
     StellarPaymentOp = 211
-    StellarPathPaymentOp = 212
-    StellarManageOfferOp = 213
+    StellarPathPaymentStrictReceiveOp = 212
+    StellarManageSellOfferOp = 213
     StellarCreatePassiveOfferOp = 214
     StellarSetOptionsOp = 215
     StellarChangeTrustOp = 216
@@ -6052,7 +6052,7 @@ class StellarCreateAccountOp(protobuf.MessageType):
         self.source_account = source_account
 
 
-class StellarPathPaymentOp(protobuf.MessageType):
+class StellarPathPaymentStrictReceiveOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 212
     FIELDS = {
         1: protobuf.Field("source_account", "string", repeated=False, required=False),
@@ -6084,7 +6084,7 @@ class StellarPathPaymentOp(protobuf.MessageType):
         self.source_account = source_account
 
 
-class StellarManageOfferOp(protobuf.MessageType):
+class StellarManageSellOfferOp(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 213
     FIELDS = {
         1: protobuf.Field("source_account", "string", repeated=False, required=False),
