@@ -28,7 +28,7 @@ async def process_operation(
     elif serialize.StellarCreateAccountOp.is_type_of(op):
         await layout.confirm_create_account_op(ctx, op)
         serialize.write_create_account_op(w, op)
-    elif serialize.StellarCreatePassiveOfferOp.is_type_of(op):
+    elif serialize.StellarCreatePassiveSellOfferOp.is_type_of(op):
         await layout.confirm_create_passive_offer_op(ctx, op)
         serialize.write_create_passive_offer_op(w, op)
     elif serialize.StellarManageDataOp.is_type_of(op):

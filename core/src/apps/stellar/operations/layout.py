@@ -6,7 +6,7 @@ from trezor.messages import (
     StellarBumpSequenceOp,
     StellarChangeTrustOp,
     StellarCreateAccountOp,
-    StellarCreatePassiveOfferOp,
+    StellarCreatePassiveSellOfferOp,
     StellarManageBuyOfferOp,
     StellarManageDataOp,
     StellarManageSellOfferOp,
@@ -99,7 +99,7 @@ async def confirm_create_account_op(ctx: Context, op: StellarCreateAccountOp) ->
 
 
 async def confirm_create_passive_offer_op(
-    ctx: Context, op: StellarCreatePassiveOfferOp
+    ctx: Context, op: StellarCreatePassiveSellOfferOp
 ) -> None:
     if op.amount == 0:
         text = "Delete Passive Offer"
@@ -139,7 +139,7 @@ async def confirm_manage_sell_offer_op(
 async def _confirm_offer(
     ctx: Context,
     title: str,
-    op: StellarCreatePassiveOfferOp
+    op: StellarCreatePassiveSellOfferOp
     | StellarManageSellOfferOp
     | StellarManageBuyOfferOp,
 ) -> None:
