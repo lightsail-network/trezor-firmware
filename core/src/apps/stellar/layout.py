@@ -16,7 +16,7 @@ async def require_confirm_init(
     network_passphrase: str,
     accounts_match: bool,
 ) -> None:
-    description = "Initialize signing with" + " your account" if accounts_match else ""
+    description = "Initialize signing with" + (" your account" if accounts_match else "")
     await layouts.confirm_address(
         "Confirm Stellar",
         address,
