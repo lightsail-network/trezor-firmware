@@ -737,6 +737,8 @@ if not utils.BITCOIN_ONLY:
     import apps.stellar.operations.layout
     apps.stellar.operations.serialize
     import apps.stellar.operations.serialize
+    apps.stellar.sign_soroban_auth
+    import apps.stellar.sign_soroban_auth
     apps.stellar.sign_tx
     import apps.stellar.sign_tx
     apps.stellar.writers

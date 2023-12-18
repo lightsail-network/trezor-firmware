@@ -137,18 +137,8 @@ def sign_transaction(
     required=False,
     help="Network passphrase (blank for public network).",
 )
-@click.option(
-    "-e" "--nonce",
-    required=True,
-    help="A number used to prevent replay attacks",
-    type=int,
-)
-@click.option(
-    "-s" "--signature-expiration-ledger",
-    required=True,
-    help="The (exclusive) future ledger sequence number until which this authorization entry should be valid.",
-    type=int,
-)
+@click.argument("nonce", type=int)
+@click.argument("signature-expiration-ledger", type=int)
 @click.argument("b64invocation")
 @with_client
 def sign_soroban_authorization(
@@ -159,6 +149,15 @@ def sign_soroban_authorization(
     address: str,
     network_passphrase: str,
 ) -> bytes:
+    """Sign a base64-encoded SorobanAuthorizedInvocation object.
+
+    NONCE: A number used to prevent replay attacks.\n
+    SIGNATURE_EXPIRATION_LEDGER: The (exclusive) future ledger sequence number until which this authorization entry should be valid.\n
+    B64INVOCATION: A base64-encoded SorobanAuthorizedInvocation object.
+    """
+    print(f"network_passphrase: {network_passphrase}, address: {address}, nonce: {nonce}, signature_expiration_ledger: {signature_expiration_ledger}")
+    print(f"b64invocation: {b64invocation}")
+    _check_sdk_installed()
     try:
         invocation_xdr = SorobanAuthorizedInvocation.from_xdr(b64invocation)
     except Exception:
