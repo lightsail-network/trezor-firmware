@@ -36,6 +36,17 @@ async def sign_soroban_auth(
     network_passphrase_hash = sha256(msg.network_passphrase.encode()).digest()
     writers.write_bytes_fixed(w, network_passphrase_hash, 32)
 
+    address = helpers.address_from_public_key(pubkey)
+
+    # confirm init
+    await layout.require_confirm_init(address, msg.network_passphrase, False)
+
+    # confirm auth info
+    await layout.require_confirm_soroban_auth_info(
+        msg.nonce, msg.signature_expiration_ledger
+    )
+
+    await layout.require_confirm_soroban_invocation(msg.invocation)
     # ---------------------------------
     # FINAL
     # ---------------------------------

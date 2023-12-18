@@ -7,8 +7,9 @@ from trezor.enums import ButtonRequestType
 from . import consts
 
 if TYPE_CHECKING:
+    from typing import Iterable
     from trezor.enums import StellarMemoType
-    from trezor.messages import StellarAsset
+    from trezor.messages import StellarAsset, StellarSorobanAuthorizedInvocation
 
 
 async def require_confirm_init(
@@ -16,7 +17,9 @@ async def require_confirm_init(
     network_passphrase: str,
     accounts_match: bool,
 ) -> None:
-    description = "Initialize signing with" + (" your account" if accounts_match else "")
+    description = "Initialize signing with" + (
+        " your account" if accounts_match else ""
+    )
     await layouts.confirm_address(
         "Confirm Stellar",
         address,
@@ -116,3 +119,54 @@ def format_amount(amount: int, asset: StellarAsset | None = None) -> str:
         + " "
         + format_asset(asset)
     )
+
+
+async def require_confirm_soroban_auth_info(
+    nonce: int, signature_expiration_ledger: int
+) -> None:
+    await layouts.confirm_properties(
+        "confirm_soroban_auth_info",
+        "Confirm Soroban Auth",
+        (
+            ("Nonce", str(nonce)),
+            ("Signature Exp Ledger", str(signature_expiration_ledger)),
+        ),
+    )
+
+
+async def require_confirm_soroban_invocation(
+    invocation: StellarSorobanAuthorizedInvocation,
+) -> None:
+    # TODO: check func type
+    await layouts.confirm_properties(
+        "confirm_soroban_auth",
+        "Confirm Invocation",
+        (
+            ("Contract ID", invocation.function.contract_fn.contract_address.address),
+            ("Function", invocation.function.contract_fn.function_name),
+        ),
+    )
+
+    for idx, arg in enumerate(invocation.function.contract_fn.args):
+        await layouts.confirm_properties(
+            "confirm_soroban_auth",
+            f"Args {idx}",
+            (
+                ("Key", "key data"),
+                ("Value", "value data"),
+            ),
+        )
+
+
+# async def should_show_array(
+#         parent_objects: Iterable[str],
+#         data_type: str,
+#         size: int,
+# ) -> bool:
+#     para = ((ui.NORMAL, format_plural("Array of {count} {plural}", size, data_type)),)
+#     return await should_show_more(
+#         limit_str(".".join(parent_objects)),
+#         para,
+#         "Show full array",
+#         "should_show_array",
+#     )
