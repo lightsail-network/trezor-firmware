@@ -291,7 +291,7 @@ message StellarSignedTx {
 message StellarSCVal {
     required StellarSCValType type = 1;
     optional bool b = 2; // SCV_VOID
-    reserved 3; // SCV_ERROR
+    reserved 3; // SCV_ERROR, not supported yet
     optional uint32 u32 = 4; // SCV_U32
     optional sint32 i32 = 5; // SCV_I32
     optional uint64 u64 = 6; // SCV_U64
@@ -303,14 +303,13 @@ message StellarSCVal {
     optional StellarUInt256Parts u256 = 12; // SCV_U256
     optional StellarInt256Parts i256 = 13; // SCV_I256
     optional bytes bytes = 14; // SCV_BYTES
-    optional string string = 15; // SCV_STRING
+    optional string string = 15; // SCV_STRING, We do not allow sending binary data here, which is the same as how memo_text is handled, see: https://github.com/trezor/trezor-firmware/issues/610
     optional string symbol = 16; // SCV_SYMBOL
     repeated StellarSCVal vec = 17; // SCV_VEC
     repeated StellarSCValMapEntry map = 18; // SCV_MAP
     optional StellarSCAddress address = 19; // SCV_ADDRESS
     optional sint64 nonce_key = 20; // SCV_LEDGER_KEY_NONCE
     optional StellarSCContractInstance instance = 21; // SCV_CONTRACT_INSTANCE
-
 
     message StellarUInt128Parts {
         required uint64 hi = 1;
@@ -337,10 +336,10 @@ message StellarSCVal {
     }
 
     message StellarSCAddress {
-        required SCAddressType type = 1;
+        required StellarSCAddressType type = 1;
         required string address = 2; // stellar account address (G...) or contract address (C...), TODO: bytes?
 
-        enum SCAddressType
+        enum StellarSCAddressType
         {
             SC_ADDRESS_TYPE_ACCOUNT = 0;
             SC_ADDRESS_TYPE_CONTRACT = 1;
@@ -348,10 +347,10 @@ message StellarSCVal {
     }
 
     message StellarContractExecutable {
-        required bytes code = 1;
+        required StellarContractExecutableType type = 1;
         optional bytes wasm_hash = 2;
 
-        enum ContractExecutableType
+        enum StellarContractExecutableType
         {
             CONTRACT_EXECUTABLE_WASM = 0;
             CONTRACT_EXECUTABLE_STELLAR_ASSET = 1;
@@ -364,7 +363,7 @@ message StellarSCVal {
     }
 
     message StellarSCContractInstance {
-        required StellarSCContractInstance executable = 1;
+        required StellarContractExecutable executable = 1;
         repeated StellarSCValMapEntry storage = 2;
 
     }

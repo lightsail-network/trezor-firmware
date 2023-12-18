@@ -259,6 +259,7 @@ enum MessageType {
     reserved 224;  // omitted: StellarCreateClaimableBalanceOp
     MessageType_StellarClaimClaimableBalanceOp = 225 [(wire_in) = true];
     MessageType_StellarSignedTx = 230 [(wire_out) = true];
+    MessageType_StellarSignSorobanAuthorization = 238 [(wire_out) = true];
 
     // Cardano
     // dropped Sign/VerifyMessage ids 300-302

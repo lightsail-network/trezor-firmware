@@ -148,6 +148,7 @@ if not utils.BITCOIN_ONLY:
     StellarPathPaymentStrictSendOp = 223
     StellarClaimClaimableBalanceOp = 225
     StellarSignedTx = 230
+    StellarSignSorobanAuthorization = 238
     CardanoGetPublicKey = 305
     CardanoPublicKey = 306
     CardanoGetAddress = 307

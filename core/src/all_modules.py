@@ -415,10 +415,22 @@ if not utils.BITCOIN_ONLY:
     import trezor.enums.NEMSupplyChangeType
     trezor.enums.StellarAssetType
     import trezor.enums.StellarAssetType
+    trezor.enums.StellarContractExecutableType
+    import trezor.enums.StellarContractExecutableType
+    trezor.enums.StellarHostFunctionType
+    import trezor.enums.StellarHostFunctionType
     trezor.enums.StellarMemoType
     import trezor.enums.StellarMemoType
+    trezor.enums.StellarSCAddressType
+    import trezor.enums.StellarSCAddressType
+    trezor.enums.StellarSCValType
+    import trezor.enums.StellarSCValType
     trezor.enums.StellarSignerType
     import trezor.enums.StellarSignerType
+    trezor.enums.StellarSorobanAuthorizedFunctionType
+    import trezor.enums.StellarSorobanAuthorizedFunctionType
+    trezor.enums.StellarSorobanCredentialsType
+    import trezor.enums.StellarSorobanCredentialsType
     trezor.enums.TezosBallotType
     import trezor.enums.TezosBallotType
     trezor.enums.TezosContractType
