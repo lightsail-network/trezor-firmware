@@ -287,3 +287,185 @@ message StellarSignedTx {
     required bytes public_key = 1;  // public key for the private key used to sign data
     required bytes signature = 2;   // signature suitable for sending to the Stellar network
 }
+
+message StellarSCVal {
+    required StellarSCValType type = 1;
+    optional bool b = 2; // SCV_VOID
+    reserved 3; // SCV_ERROR
+    optional uint32 u32 = 4; // SCV_U32
+    optional sint32 i32 = 5; // SCV_I32
+    optional uint64 u64 = 6; // SCV_U64
+    optional sint64 i64 = 7; // SCV_I64
+    optional uint64 timepoint = 8; // SCV_TIMEPOINT
+    optional uint64 duration = 9; // SCV_DURATION
+    optional StellarUInt128Parts u128 = 10; // SCV_U128
+    optional StellarInt128Parts i128 = 11; // SCV_I128
+    optional StellarUInt256Parts u256 = 12; // SCV_U256
+    optional StellarInt256Parts i256 = 13; // SCV_I256
+    optional bytes bytes = 14; // SCV_BYTES
+    optional string string = 15; // SCV_STRING
+    optional string symbol = 16; // SCV_SYMBOL
+    repeated StellarSCVal vec = 17; // SCV_VEC
+    repeated StellarSCValMapEntry map = 18; // SCV_MAP
+    optional StellarSCAddress address = 19; // SCV_ADDRESS
+    optional sint64 nonce_key = 20; // SCV_LEDGER_KEY_NONCE
+    optional StellarSCContractInstance instance = 21; // SCV_CONTRACT_INSTANCE
+
+
+    message StellarUInt128Parts {
+        required uint64 hi = 1;
+        required uint64 lo = 2;
+    }
+
+    message StellarInt128Parts {
+        required sint64 hi = 1;
+        required uint64 lo = 2;
+    }
+
+    message StellarUInt256Parts {
+        required uint64 hi_hi = 1;
+        required uint64 hi_lo = 2;
+        required uint64 lo_hi = 3;
+        required uint64 lo_lo = 4;
+    }
+
+    message StellarInt256Parts {
+        required sint64 hi_hi = 1;
+        required uint64 hi_lo = 2;
+        required uint64 lo_hi = 3;
+        required uint64 lo_lo = 4;
+    }
+
+    message StellarSCAddress {
+        required SCAddressType type = 1;
+        required string address = 2; // stellar account address (G...) or contract address (C...), TODO: bytes?
+
+        enum SCAddressType
+        {
+            SC_ADDRESS_TYPE_ACCOUNT = 0;
+            SC_ADDRESS_TYPE_CONTRACT = 1;
+        };
+    }
+
+    message StellarContractExecutable {
+        required bytes code = 1;
+        optional bytes wasm_hash = 2;
+
+        enum ContractExecutableType
+        {
+            CONTRACT_EXECUTABLE_WASM = 0;
+            CONTRACT_EXECUTABLE_STELLAR_ASSET = 1;
+        };
+    }
+
+    message StellarSCValMapEntry {
+        optional StellarSCVal key = 1;
+        optional StellarSCVal value = 2;
+    }
+
+    message StellarSCContractInstance {
+        required StellarSCContractInstance executable = 1;
+        repeated StellarSCValMapEntry storage = 2;
+
+    }
+
+    enum StellarSCValType {
+        SCV_BOOL = 0;
+        SCV_VOID = 1;
+        SCV_ERROR = 2;
+        SCV_U32 = 3;
+        SCV_I32 = 4;
+        SCV_U64 = 5;
+        SCV_I64 = 6;
+        SCV_TIMEPOINT = 7;
+        SCV_DURATION = 8;
+        SCV_U128 = 9;
+        SCV_I128 = 10;
+        SCV_U256 = 11;
+        SCV_I256 = 12;
+        SCV_BYTES = 13;
+        SCV_STRING = 14;
+        SCV_SYMBOL = 15;
+        SCV_VEC = 16;
+        SCV_MAP = 17;
+        SCV_ADDRESS = 18;
+        SCV_CONTRACT_INSTANCE = 19;
+        SCV_LEDGER_KEY_CONTRACT_INSTANCE = 20;
+        SCV_LEDGER_KEY_NONCE = 21;
+    }
+}
+
+message StellarInvokeContractArgs {
+    required StellarSCVal.StellarSCAddress contract_address = 1;
+    required string function_name = 2;
+    repeated StellarSCVal args = 3;
+}
+
+message StellarSorobanAuthorizedFunction {
+    required StellarSorobanAuthorizedFunctionType type = 1;
+    optional StellarInvokeContractArgs contract_fn = 2;
+
+    enum StellarSorobanAuthorizedFunctionType {
+        SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN = 0;
+        SOROBAN_AUTHORIZED_FUNCTION_TYPE_CREATE_CONTRACT_HOST_FN = 1; // Creating a contract can be done using any address without security issues, so we will not provide support for it at this time.
+    }
+}
+
+message StellarSorobanAuthorizedInvocation {
+    required StellarSorobanAuthorizedFunction function = 1;
+    repeated StellarSorobanAuthorizedInvocation sub_invocations = 2;
+}
+
+message StellarHostFunction {
+    required StellarHostFunctionType type = 1;
+    optional StellarInvokeContractArgs invoke_contract = 2;
+
+    enum StellarHostFunctionType
+    {
+        HOST_FUNCTION_TYPE_INVOKE_CONTRACT = 0;
+        HOST_FUNCTION_TYPE_CREATE_CONTRACT = 1;
+        HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_WASM = 2;
+    }
+}
+
+message StellarSorobanAddressCredentials {
+    required StellarSCVal.StellarSCAddress address = 1;
+    required sint64 nonce = 2;
+    required uint32 signature_expiration_ledger = 3;
+    required StellarSCVal signature = 4;
+}
+
+message StellarSorobanCredentials {
+    required StellarSorobanCredentialsType type = 1;
+    optional StellarSorobanAddressCredentials address = 2;
+
+    enum StellarSorobanCredentialsType
+    {
+        SOROBAN_CREDENTIALS_SOURCE_ACCOUNT = 0;
+        SOROBAN_CREDENTIALS_ADDRESS = 1;
+    };
+}
+
+message StellarSorobanAuthorizationEntry {
+    required StellarSorobanCredentials credentials = 1;
+    required StellarSorobanAuthorizedInvocation root_invocation = 2;
+}
+
+message StellarInvokeHostFunctionOp {
+    optional string source_account = 1; // (optional) source account address
+    required StellarHostFunction function = 2;
+    repeated StellarSorobanAuthorizationEntry auth = 3;
+}
+
+/**
+ * Request: ask device to sign Stellar Soroban authorization
+ * @start
+ * @next StellarSignedTx
+ */
+message StellarSignSorobanAuthorization {
+    repeated uint32 address_n = 1;  // BIP-32 path. For compatibility with other wallets, must be m/44'/148'/index'
+    required string network_passphrase = 2;  // passphrase for signing messages on the destination network
+    required sint64 nonce = 3;  // nonce for the authorization
+    required uint32 signature_expiration_ledger = 4;  // ledger number after which the signature expires
+    required StellarSorobanAuthorizedInvocation invocation = 5;  // the invocation to authorize
+}
