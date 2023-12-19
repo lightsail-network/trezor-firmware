@@ -61,36 +61,6 @@ op_codes: dict[int, int] = {
     MessageType.StellarClaimClaimableBalanceOp: 15,
 }
 
-# StellarSCValType
-SCV_BOOL = 0
-SCV_VOID = 1
-SCV_ERROR = 2
-SCV_U32 = 3
-SCV_I32 = 4
-SCV_U64 = 5
-SCV_I64 = 6
-SCV_TIMEPOINT = 7
-SCV_DURATION = 8
-SCV_U128 = 9
-SCV_I128 = 10
-SCV_U256 = 11
-SCV_I256 = 12
-SCV_BYTES = 13
-SCV_STRING = 14
-SCV_SYMBOL = 15
-SCV_VEC = 16
-SCV_MAP = 17
-SCV_ADDRESS = 18
-SCV_CONTRACT_INSTANCE = 19
-SCV_LEDGER_KEY_CONTRACT_INSTANCE = 20
-SCV_LEDGER_KEY_NONCE = 21
-
-# StellarSorobanAuthorizedFunctionType
-SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN = 0
-
-# StellarContractExecutableType
-CONTRACT_EXECUTABLE_WASM = 0
-CONTRACT_EXECUTABLE_STELLAR_ASSET = 1
 
 # https://www.stellar.org/developers/guides/concepts/accounts.html#balance
 # https://github.com/stellar/go/blob/3d2c1defe73dbfed00146ebe0e8d7e07ce4bb1b6/amount/main.go#L23
