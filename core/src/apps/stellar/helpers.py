@@ -24,6 +24,27 @@ def address_from_public_key(pubkey: bytes) -> str:
 
     return base32.encode(address)
 
+def encode_contract(raw_key: bytes) -> str:
+    """Returns the base32-encoded version of contract address bytes (C...)"""
+    address = bytearray()
+    address.append(2 << 3)  # version -> 'C'
+    address.extend(raw_key)
+    address.extend(_crc16_checksum(bytes(address)))  # checksum
+
+    return base32.encode(address)
+
+def decode_contract(contract: str) -> bytes:
+    """Extracts raw key from a contract address
+    Contract address is in format:
+    <1-byte version> <32-bytes contract key> <2-bytes CRC-16 checksum>
+    """
+    from trezor.wire import ProcessError
+
+    b = base32.decode(contract)
+    # verify checksum - function deleted as it saved 50 bytes from the binary
+    if _crc16_checksum(b[:-2]) != b[-2:]:
+        raise ProcessError("Invalid address checksum")
+    return b[1:-2]
 
 def _crc16_checksum(data: bytes) -> bytes:
     """Returns the CRC-16 checksum of bytearray bytes
