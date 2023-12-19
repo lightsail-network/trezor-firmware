@@ -40,11 +40,8 @@ async def sign_soroban_auth(
 
     # confirm auth info
     await layout.require_confirm_soroban_auth_info(
-        msg.nonce, msg.signature_expiration_ledger
+        msg.nonce, msg.signature_expiration_ledger, msg.invocation
     )
-
-    # confirm invocation
-    await layout.require_confirm_soroban_invocation([], msg.invocation)
 
     # ---------------------------------
     # FINAL

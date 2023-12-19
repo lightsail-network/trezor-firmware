@@ -333,7 +333,9 @@ async def require_confirm_soroban_invocation(
 
 
 async def require_confirm_soroban_auth_info(
-    nonce: int, signature_expiration_ledger: int
+    nonce: int,
+    signature_expiration_ledger: int,
+    invocation: StellarSorobanAuthorizedInvocation,
 ) -> None:
     await layouts.confirm_properties(
         "confirm_soroban_auth_info",
@@ -343,6 +345,7 @@ async def require_confirm_soroban_auth_info(
             ("Signature Exp Ledger", str(signature_expiration_ledger)),
         ),
     )
+    await require_confirm_soroban_invocation([], invocation)
 
 
 def limit_str(s: str, limit: int = 16) -> str:
