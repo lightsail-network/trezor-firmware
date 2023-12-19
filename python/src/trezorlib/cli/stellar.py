@@ -155,7 +155,9 @@ def sign_soroban_authorization(
     SIGNATURE_EXPIRATION_LEDGER: The (exclusive) future ledger sequence number until which this authorization entry should be valid.\n
     B64INVOCATION: A base64-encoded SorobanAuthorizedInvocation object.
     """
-    print(f"network_passphrase: {network_passphrase}, address: {address}, nonce: {nonce}, signature_expiration_ledger: {signature_expiration_ledger}")
+    print(
+        f"network_passphrase: {network_passphrase}, address: {address}, nonce: {nonce}, signature_expiration_ledger: {signature_expiration_ledger}"
+    )
     print(f"b64invocation: {b64invocation}")
     _check_sdk_installed()
     try:

@@ -85,7 +85,12 @@ SCV_CONTRACT_INSTANCE = 19
 SCV_LEDGER_KEY_CONTRACT_INSTANCE = 20
 SCV_LEDGER_KEY_NONCE = 21
 
+# StellarSorobanAuthorizedFunctionType
 SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN = 0
+
+# StellarContractExecutableType
+CONTRACT_EXECUTABLE_WASM = 0
+CONTRACT_EXECUTABLE_STELLAR_ASSET = 1
 
 # https://www.stellar.org/developers/guides/concepts/accounts.html#balance
 # https://github.com/stellar/go/blob/3d2c1defe73dbfed00146ebe0e8d7e07ce4bb1b6/amount/main.go#L23

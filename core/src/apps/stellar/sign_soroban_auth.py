@@ -1,7 +1,5 @@
 from typing import TYPE_CHECKING
 
-from trezor import log
-
 from apps.common.keychain import auto_keychain
 
 if TYPE_CHECKING:
@@ -17,12 +15,10 @@ async def sign_soroban_auth(
     from trezor.crypto.curve import ed25519
     from trezor.crypto.hashlib import sha256
     from trezor.messages import StellarSignedTx
-    from trezor.wire import DataError, ProcessError
-    from trezor.wire.context import call_any
 
     from apps.common import paths, seed
 
-    from . import consts, helpers, layout, writers
+    from . import helpers, layout, writers
 
     await paths.validate_path(keychain, msg.address_n)
 

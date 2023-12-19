@@ -1,14 +1,10 @@
+import ubinascii
 from typing import TYPE_CHECKING
 
 import trezor.ui.layouts as layouts
 from trezor import strings, ui
 from trezor.enums import ButtonRequestType
-from trezor.ui.layouts import (
-    confirm_blob,
-    confirm_ethereum_tx,
-    confirm_text,
-    should_show_more,
-)
+from trezor.ui.layouts import confirm_blob, should_show_more
 from trezor.wire import DataError
 
 from . import consts
@@ -142,13 +138,13 @@ async def require_confirm_sc_val(
         await layouts.confirm_properties(
             "confirm_sc_val",
             title,
-            ((f"val type:", data_type), (f"val:", data)),
+            (("val type:", data_type), ("val:", data)),
         )
 
     if val.type == consts.SCV_BOOL:
         await confirm_sc_val("bool", "true" if val.b else "false")
     elif val.type == consts.SCV_VOID:
-        await confirm_sc_val("void", "void")
+        await confirm_sc_val("void", "[no content]")
     elif val.type == consts.SCV_ERROR:
         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
     elif val.type == consts.SCV_U32:
@@ -198,8 +194,8 @@ async def require_confirm_sc_val(
         v = int.from_bytes(value_bytes, "big", signed=True)
         await confirm_sc_val("int256", str(v))
     elif val.type == consts.SCV_BYTES:
-        # await confirm_sc_val(val.bytes.hex())
-        pass
+        assert val.bytes is not None
+        await confirm_blob("confirm_sc_val", title, val.bytes, "val(bytes):")
     elif val.type == consts.SCV_STRING:
         assert val.string is not None
         await confirm_sc_val("string", val.string)
@@ -235,7 +231,46 @@ async def require_confirm_sc_val(
         assert val.address
         await confirm_sc_val("address", val.address.address)
     elif val.type == consts.SCV_CONTRACT_INSTANCE:
-        pass
+        assert val.instance
+        props: list[tuple[str, str]] = [("val type:", "contract instance")]
+        if val.instance.executable.type == consts.CONTRACT_EXECUTABLE_WASM:
+            assert val.instance.executable
+            assert val.instance.executable.wasm_hash
+            props.append(("executable.type", "CONTRACT_EXECUTABLE_WASM"))
+            props.append(
+                (
+                    "executable.wasm_hash",
+                    ubinascii.hexlify(val.instance.executable.wasm_hash).decode(
+                        "utf-8"
+                    ),
+                )
+            )
+            pass
+        elif val.instance.executable.type == consts.CONTRACT_EXECUTABLE_STELLAR_ASSET:
+            props.append(("executable.type", "CONTRACT_EXECUTABLE_STELLAR_ASSET"))
+            pass
+        else:
+            raise DataError(
+                f"Stellar: Unsupported executable type: {val.instance.executable.type}"
+            )
+
+        await layouts.confirm_properties("confirm_sc_val", title, props)
+
+        if await should_show_more(
+            title,
+            ((ui.NORMAL, f"{title} contains storage"),),
+            "Show full storage",
+            "should_show_storage",
+        ):
+            for idx, item in enumerate(val.instance.storage):
+                assert item.key
+                assert item.value
+                await require_confirm_sc_val(
+                    parent_objects + [str(idx), "storage", "key"], item.key
+                )
+                await require_confirm_sc_val(
+                    parent_objects + [str(idx), "storage", "value"], item.value
+                )
     elif val.type == consts.SCV_LEDGER_KEY_CONTRACT_INSTANCE:
         await confirm_sc_val("ledger key contract instance", "[no content]")
     elif val.type == consts.SCV_LEDGER_KEY_NONCE:
