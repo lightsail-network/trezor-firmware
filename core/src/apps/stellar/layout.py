@@ -5,14 +5,14 @@ import trezor.ui.layouts as layouts
 from trezor import strings, ui
 from trezor.enums import (
     ButtonRequestType,
+    StellarContractExecutableType,
     StellarSCValType,
     StellarSorobanAuthorizedFunctionType,
-    StellarContractExecutableType,
 )
 from trezor.ui.layouts import confirm_blob, should_show_more
 from trezor.wire import DataError
 
-from . import consts
+from . import consts, helpers
 
 if TYPE_CHECKING:
     from trezor.enums import StellarMemoType
@@ -166,37 +166,37 @@ async def require_confirm_sc_val(
         await confirm_sc_val("duration", str(val.duration))
     elif val.type == StellarSCValType.SCV_U128:
         assert val.u128
-        value_bytes = val.u128.hi.to_bytes(
-            8, "big", signed=False
-        ) + val.u128.lo.to_bytes(8, "big", signed=False)
-        v = int.from_bytes(value_bytes, "big", signed=False)
+        value_bytes = helpers.int_to_bytes(val.u128.hi, 8) + helpers.int_to_bytes(
+            val.u128.lo, 8
+        )
+        v = helpers.bytes_to_int(value_bytes)
         await confirm_sc_val("uint128", str(v))
     elif val.type == StellarSCValType.SCV_I128:
         assert val.i128
-        value_bytes = val.i128.hi.to_bytes(
-            8, "big", signed=True
-        ) + val.i128.lo.to_bytes(8, "big", signed=False)
-        v = int.from_bytes(value_bytes, "big", signed=True)
+        value_bytes = helpers.int_to_bytes(val.i128.hi, 8, True) + helpers.int_to_bytes(
+            val.i128.lo, 8
+        )
+        v = helpers.bytes_to_int(value_bytes, True)
         await confirm_sc_val("int128", str(v))
     elif val.type == StellarSCValType.SCV_U256:
         assert val.u256
         value_bytes = (
-            val.u256.hi_hi.to_bytes(8, "big", signed=False)
-            + val.u256.hi_lo.to_bytes(8, "big", signed=False)
-            + val.u256.lo_hi.to_bytes(8, "big", signed=False)
-            + val.u256.lo_lo.to_bytes(8, "big", signed=False)
+            helpers.int_to_bytes(val.u256.hi_hi, 8)
+            + helpers.int_to_bytes(val.u256.hi_lo, 8)
+            + helpers.int_to_bytes(val.u256.lo_hi, 8)
+            + helpers.int_to_bytes(val.u256.lo_lo, 8)
         )
-        v = int.from_bytes(value_bytes, "big", signed=False)
+        v = helpers.bytes_to_int(value_bytes)
         await confirm_sc_val("uint256", str(v))
     elif val.type == StellarSCValType.SCV_I256:
         assert val.i256
         value_bytes = (
-            val.i256.hi_hi.to_bytes(8, "big", signed=True)
-            + val.i256.hi_lo.to_bytes(8, "big", signed=False)
-            + val.i256.lo_hi.to_bytes(8, "big", signed=False)
-            + val.i256.lo_lo.to_bytes(8, "big", signed=False)
+            helpers.int_to_bytes(val.i256.hi_hi, 8, True)
+            + helpers.int_to_bytes(val.i256.hi_lo, 8)
+            + helpers.int_to_bytes(val.i256.lo_hi, 8)
+            + helpers.int_to_bytes(val.i256.lo_lo, 8)
         )
-        v = int.from_bytes(value_bytes, "big", signed=True)
+        v = helpers.bytes_to_int(value_bytes, True)
         await confirm_sc_val("int256", str(v))
     elif val.type == StellarSCValType.SCV_BYTES:
         assert val.bytes is not None

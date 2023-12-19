@@ -1,9 +1,16 @@
 from typing import TYPE_CHECKING
 
-import apps.common.writers as writers
+from trezor.crypto.hashlib import sha256
+from trezor.enums import (
+    StellarContractExecutableType,
+    StellarSCAddressType,
+    StellarSCValType,
+    StellarSorobanAuthorizedFunctionType,
+)
 from trezor.utils import ensure
 from trezor.wire import DataError
-from trezor.crypto.hashlib import sha256
+
+import apps.common.writers as writers
 
 # Reexporting to other modules
 write_bytes_fixed = writers.write_bytes_fixed
@@ -13,17 +20,13 @@ write_uint64 = writers.write_uint64_be
 if TYPE_CHECKING:
     from typing import AnyStr
 
-    from trezor.utils import Writer
     from trezor.messages import (
-        StellarSCValType,
+        StellarSCAddress,
         StellarSCVal,
         StellarSorobanAuthorizedFunction,
         StellarSorobanAuthorizedInvocation,
-        StellarContractExecutableType,
-        StellarSCAddress,
-        StellarSCAddressType,
-        StellarSorobanAuthorizedFunctionType,
     )
+    from trezor.utils import Writer
 
 
 def _write_int(w: Writer, n: int, bits: int, bigendian: bool) -> int:
@@ -75,34 +78,42 @@ def write_contract(w: Writer, contract: str) -> None:
     writers.write_bytes_fixed(w, decode_contract(contract), 32)
 
 
-def write_sc_address(w: Writer, address: StellarSCAddress) -> None:
-    w.write_uint32(address.type)
-    if address.type == StellarSCAddressType.SC_ADDRESS_TYPE_ACCOUNT:
-        write_pubkey(w, address.account)
-    elif address.type == StellarSCAddressType.SC_ADDRESS_TYPE_CONTRACT:
-        write_contract(w, address.contract)
+def write_sc_address(w: Writer, sc_address: StellarSCAddress) -> None:
+    write_uint32(w, sc_address.type)
+    if sc_address.type == StellarSCAddressType.SC_ADDRESS_TYPE_ACCOUNT:
+        write_pubkey(w, sc_address.address)
+    elif sc_address.type == StellarSCAddressType.SC_ADDRESS_TYPE_CONTRACT:
+        write_contract(w, sc_address.address)
     else:
-        raise DataError(f"Stellar: Unsupported SC address type: {address.type}")
+        raise DataError(f"Stellar: Unsupported SC address type: {sc_address.type}")
 
 
 def write_sc_val(w: Writer, val: StellarSCVal) -> None:
+    write_uint32(w, val.type)
     if val.type == StellarSCValType.SCV_BOOL:
-        write_bool(w, val.bool)
+        assert val.b is not None
+        write_bool(w, val.b)
     elif val.type == StellarSCValType.SCV_VOID:
         pass  # nothing to write
     elif val.type == StellarSCValType.SCV_ERROR:
         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
     elif val.type == StellarSCValType.SCV_U32:
+        assert val.u32 is not None
         write_uint32(w, val.u32)
     elif val.type == StellarSCValType.SCV_I32:
+        assert val.i32 is not None
         write_int32(w, val.i32)
     elif val.type == StellarSCValType.SCV_U64:
+        assert val.u64 is not None
         write_uint64(w, val.u64)
     elif val.type == StellarSCValType.SCV_I64:
+        assert val.i64 is not None
         write_int64(w, val.i64)
     elif val.type == StellarSCValType.SCV_TIMEPOINT:
+        assert val.timepoint is not None
         write_uint64(w, val.timepoint)
     elif val.type == StellarSCValType.SCV_DURATION:
+        assert val.duration is not None
         write_uint64(w, val.duration)
     elif val.type == StellarSCValType.SCV_U128:
         assert val.u128
@@ -133,8 +144,10 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
             len(val.bytes) + (4 - len(val.bytes) % 4),
         )
     elif val.type == StellarSCValType.SCV_STRING:
+        assert val.string is not None
         write_string(w, val.string)
     elif val.type == StellarSCValType.SCV_SYMBOL:
+        assert val.symbol is not None
         write_string(w, val.symbol)
     elif val.type == StellarSCValType.SCV_VEC:
         write_bool(w, True)
@@ -145,6 +158,8 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
         write_bool(w, True)
         write_uint32(w, len(val.map))
         for item in val.map:
+            assert item.key
+            assert item.value
             write_sc_val(w, item.key)
             write_sc_val(w, item.value)
     elif val.type == StellarSCValType.SCV_ADDRESS:
@@ -152,7 +167,7 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
         write_sc_address(w, val.address)
     elif val.type == StellarSCValType.SCV_CONTRACT_INSTANCE:
         assert val.instance
-        write_uint32(w, val.instance.type)
+        write_uint32(w, val.instance.executable.type)
         if (
             val.instance.executable.type
             == StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM
@@ -173,6 +188,8 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
             write_bool(w, True)
             write_uint32(w, len(val.instance.storage))
             for item in val.instance.storage:
+                assert item.key
+                assert item.value
                 write_sc_val(w, item.key)
                 write_sc_val(w, item.value)
         else:
@@ -180,7 +197,8 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
     elif val.type == StellarSCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE:
         pass  # nothing to write
     elif val.type == StellarSCValType.SCV_LEDGER_KEY_NONCE:
-        write_int64(w, val.nonce)
+        assert val.nonce_key is not None
+        write_int64(w, val.nonce_key)
     else:
         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
 
@@ -197,7 +215,7 @@ def write_soroban_authorized_function(
 
     write_uint32(w, func.type)
     write_sc_address(w, func.contract_fn.contract_address)
-    write_string(w, func.contract_fn.contract_name)
+    write_string(w, func.contract_fn.function_name)
     write_uint32(w, len(func.contract_fn.args))
     for arg in func.contract_fn.args:
         write_sc_val(w, arg)
