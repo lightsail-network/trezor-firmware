@@ -117,12 +117,12 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
         write_uint64(w, val.duration)
     elif val.type == StellarSCValType.SCV_U128:
         assert val.u128
-        write_uint32(w, val.u128.hi)
-        write_uint32(w, val.u128.lo)
+        write_uint64(w, val.u128.hi)
+        write_uint64(w, val.u128.lo)
     elif val.type == StellarSCValType.SCV_I128:
         assert val.i128
-        write_int32(w, val.i128.hi)
-        write_uint32(w, val.i128.lo)
+        write_int64(w, val.i128.hi)
+        write_uint64(w, val.i128.lo)
     elif val.type == StellarSCValType.SCV_U256:
         assert val.u256
         write_uint64(w, val.u256.hi_hi)
