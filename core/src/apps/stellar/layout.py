@@ -3,7 +3,12 @@ from typing import TYPE_CHECKING
 
 import trezor.ui.layouts as layouts
 from trezor import strings, ui
-from trezor.enums import ButtonRequestType, StellarSCValType, StellarSorobanAuthorizedFunctionType, StellarContractExecutableType
+from trezor.enums import (
+    ButtonRequestType,
+    StellarSCValType,
+    StellarSorobanAuthorizedFunctionType,
+    StellarContractExecutableType,
+)
 from trezor.ui.layouts import confirm_blob, should_show_more
 from trezor.wire import DataError
 
@@ -214,7 +219,7 @@ async def require_confirm_sc_val(
     elif val.type == StellarSCValType.SCV_MAP:
         if await should_show_more(
             title,
-            ((ui.NORMAL, f"{title} contains {len(val.ma)} items"),),
+            ((ui.NORMAL, f"{title} contains {len(val.map)} items"),),
             "Show full map",
             "should_show_map",
         ):
@@ -233,7 +238,10 @@ async def require_confirm_sc_val(
     elif val.type == StellarSCValType.SCV_CONTRACT_INSTANCE:
         assert val.instance
         props: list[tuple[str, str]] = [("val type:", "contract instance")]
-        if val.instance.executable.type == StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM:
+        if (
+            val.instance.executable.type
+            == StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM
+        ):
             assert val.instance.executable
             assert val.instance.executable.wasm_hash
             props.append(("executable.type", "CONTRACT_EXECUTABLE_WASM"))
@@ -246,7 +254,10 @@ async def require_confirm_sc_val(
                 )
             )
             pass
-        elif val.instance.executable.type == StellarContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET:
+        elif (
+            val.instance.executable.type
+            == StellarContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET
+        ):
             props.append(("executable.type", "CONTRACT_EXECUTABLE_STELLAR_ASSET"))
             pass
         else:
@@ -279,10 +290,13 @@ async def require_confirm_sc_val(
         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
 
 
-async def confirm_authorized_function(
+async def confirm_soroban_authorized_function(
     parent_objects: list[str], func: StellarSorobanAuthorizedFunction
 ):
-    if func.type != StellarSorobanAuthorizedFunctionType.SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN:
+    if (
+        func.type
+        != StellarSorobanAuthorizedFunctionType.SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN
+    ):
         raise DataError(f"Stellar: unsupported function type: {func.type}")
     assert func.contract_fn
 
@@ -309,7 +323,7 @@ async def require_confirm_soroban_authorized_invocation(
     invocation: StellarSorobanAuthorizedInvocation,
 ) -> None:
     # confirm contract function
-    await confirm_authorized_function(parent_objects, invocation.function)
+    await confirm_soroban_authorized_function(parent_objects, invocation.function)
 
     title = limit_str(".".join(parent_objects)) or "root invocation"
 
@@ -346,6 +360,18 @@ async def require_confirm_soroban_auth_info(
         ),
     )
     await require_confirm_soroban_authorized_invocation([], invocation)
+
+
+async def confirm_soroban_auth_final() -> None:
+    from trezor.ui.layouts import confirm_action
+
+    await confirm_action(
+        "confirm_soroban_auth_final",
+        "Confirm Soroban Auth",
+        "Really sign Soroban Auth?",
+        verb="Hold to confirm",
+        hold=True,
+    )
 
 
 def limit_str(s: str, limit: int = 16) -> str:

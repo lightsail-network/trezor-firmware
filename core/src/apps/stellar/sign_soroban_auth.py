@@ -30,9 +30,6 @@ async def sign_soroban_auth(
     # ---------------------------------
     # INIT
     # ---------------------------------
-    network_passphrase_hash = sha256(msg.network_passphrase.encode()).digest()
-    writers.write_bytes_fixed(w, network_passphrase_hash, 32)
-
     address = helpers.address_from_public_key(pubkey)
 
     # confirm init
@@ -43,13 +40,19 @@ async def sign_soroban_auth(
         msg.nonce, msg.signature_expiration_ledger, msg.invocation
     )
 
+    writers.write_soroban_auth_info(
+        w,
+        network_passphrase=msg.network_passphrase,
+        nonce=msg.nonce,
+        signature_expiration_ledger=msg.signature_expiration_ledger,
+        invocation=msg.invocation,
+    )
+
     # ---------------------------------
     # FINAL
     # ---------------------------------
-    # 4 null bytes representing a (currently unused) empty union
-    writers.write_uint32(w, 0)
     # final confirm
-    # await layout.require_confirm_final(100, 1)
+    await layout.confirm_soroban_auth_final()
 
     # sign
     digest = sha256(w).digest()

@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 import apps.common.writers as writers
 from trezor.utils import ensure
 from trezor.wire import DataError
+from trezor.crypto.hashlib import sha256
 
 # Reexporting to other modules
 write_bytes_fixed = writers.write_bytes_fixed
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
         StellarContractExecutableType,
         StellarSCAddress,
         StellarSCAddressType,
+        StellarSorobanAuthorizedFunctionType,
     )
 
 
@@ -181,3 +183,46 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
         write_int64(w, val.nonce)
     else:
         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
+
+
+def write_soroban_authorized_function(
+    w: Writer, func: StellarSorobanAuthorizedFunction
+) -> None:
+    if (
+        func.type
+        != StellarSorobanAuthorizedFunctionType.SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN
+    ):
+        raise DataError(f"Stellar: unsupported function type: {func.type}")
+    assert func.contract_fn
+
+    write_uint32(w, func.type)
+    write_sc_address(w, func.contract_fn.contract_address)
+    write_string(w, func.contract_fn.contract_name)
+    write_uint32(w, len(func.contract_fn.args))
+    for arg in func.contract_fn.args:
+        write_sc_val(w, arg)
+
+
+def write_soroban_authorized_invocation(
+    w: Writer,
+    invocation: StellarSorobanAuthorizedInvocation,
+) -> None:
+    write_soroban_authorized_function(w, invocation.function)
+    write_uint32(w, len(invocation.sub_invocations))
+    for sub_invocation in invocation.sub_invocations:
+        write_soroban_authorized_invocation(w, sub_invocation)
+
+
+def write_soroban_auth_info(
+    w: Writer,
+    network_passphrase: str,
+    nonce: int,
+    signature_expiration_ledger: int,
+    invocation: StellarSorobanAuthorizedInvocation,
+) -> None:
+    write_uint32(w, 9)  # ENVELOPE_TYPE_SOROBAN_AUTHORIZATION = 9
+    network_passphrase_hash = sha256(network_passphrase.encode()).digest()
+    write_bytes_fixed(w, network_passphrase_hash, 32)
+    write_int64(w, nonce)
+    write_uint32(w, signature_expiration_ledger)
+    write_soroban_authorized_invocation(w, invocation)
