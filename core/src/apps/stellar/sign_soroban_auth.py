@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING
 
-from apps.common.keychain import auto_keychain
 from trezor import log
+
+from apps.common.keychain import auto_keychain
 
 if TYPE_CHECKING:
     from trezor.messages import StellarSignedTx, StellarSignSorobanAuthorization
@@ -46,7 +47,9 @@ async def sign_soroban_auth(
         msg.nonce, msg.signature_expiration_ledger
     )
 
-    await layout.require_confirm_soroban_invocation(msg.invocation)
+    # confirm invocation
+    await layout.require_confirm_soroban_invocation([], msg.invocation)
+
     # ---------------------------------
     # FINAL
     # ---------------------------------

@@ -1,15 +1,26 @@
 from typing import TYPE_CHECKING
 
 import trezor.ui.layouts as layouts
-from trezor import strings
+from trezor import strings, ui
 from trezor.enums import ButtonRequestType
+from trezor.ui.layouts import (
+    confirm_blob,
+    confirm_ethereum_tx,
+    confirm_text,
+    should_show_more,
+)
+from trezor.wire import DataError
 
 from . import consts
 
 if TYPE_CHECKING:
-    from typing import Iterable
     from trezor.enums import StellarMemoType
-    from trezor.messages import StellarAsset, StellarSorobanAuthorizedInvocation
+    from trezor.messages import (
+        StellarAsset,
+        StellarSCVal,
+        StellarSorobanAuthorizedFunction,
+        StellarSorobanAuthorizedInvocation,
+    )
 
 
 async def require_confirm_init(
@@ -121,6 +132,171 @@ def format_amount(amount: int, asset: StellarAsset | None = None) -> str:
     )
 
 
+async def require_confirm_sc_val(
+    parent_objects: list[str],
+    val: StellarSCVal,
+) -> None:
+    title = limit_str(".".join(parent_objects))
+
+    async def confirm_sc_val(data_type: str, data: str) -> None:
+        await layouts.confirm_properties(
+            "confirm_sc_val",
+            title,
+            ((f"val type:", data_type), (f"val:", data)),
+        )
+
+    if val.type == consts.SCV_BOOL:
+        await confirm_sc_val("bool", "true" if val.b else "false")
+    elif val.type == consts.SCV_VOID:
+        await confirm_sc_val("void", "void")
+    elif val.type == consts.SCV_ERROR:
+        raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
+    elif val.type == consts.SCV_U32:
+        await confirm_sc_val("uint32", str(val.u32))
+    elif val.type == consts.SCV_I32:
+        await confirm_sc_val("int32", str(val.i32))
+    elif val.type == consts.SCV_U64:
+        await confirm_sc_val("uint64", str(val.u64))
+    elif val.type == consts.SCV_I64:
+        await confirm_sc_val("int64", str(val.i64))
+    elif val.type == consts.SCV_TIMEPOINT:
+        await confirm_sc_val("timepoint", str(val.timepoint))
+    elif val.type == consts.SCV_DURATION:
+        await confirm_sc_val("duration", str(val.duration))
+    elif val.type == consts.SCV_U128:
+        assert val.u128
+        value_bytes = val.u128.hi.to_bytes(
+            8, "big", signed=False
+        ) + val.u128.lo.to_bytes(8, "big", signed=False)
+        v = int.from_bytes(value_bytes, "big", signed=False)
+        await confirm_sc_val("uint128", str(v))
+    elif val.type == consts.SCV_I128:
+        assert val.i128
+        value_bytes = val.i128.hi.to_bytes(
+            8, "big", signed=True
+        ) + val.i128.lo.to_bytes(8, "big", signed=False)
+        v = int.from_bytes(value_bytes, "big", signed=True)
+        await confirm_sc_val("int128", str(v))
+    elif val.type == consts.SCV_U256:
+        assert val.u256
+        value_bytes = (
+            val.u256.hi_hi.to_bytes(8, "big", signed=False)
+            + val.u256.hi_lo.to_bytes(8, "big", signed=False)
+            + val.u256.lo_hi.to_bytes(8, "big", signed=False)
+            + val.u256.lo_lo.to_bytes(8, "big", signed=False)
+        )
+        v = int.from_bytes(value_bytes, "big", signed=False)
+        await confirm_sc_val("uint256", str(v))
+    elif val.type == consts.SCV_I256:
+        assert val.i256
+        value_bytes = (
+            val.i256.hi_hi.to_bytes(8, "big", signed=True)
+            + val.i256.hi_lo.to_bytes(8, "big", signed=False)
+            + val.i256.lo_hi.to_bytes(8, "big", signed=False)
+            + val.i256.lo_lo.to_bytes(8, "big", signed=False)
+        )
+        v = int.from_bytes(value_bytes, "big", signed=True)
+        await confirm_sc_val("int256", str(v))
+    elif val.type == consts.SCV_BYTES:
+        # await confirm_sc_val(val.bytes.hex())
+        pass
+    elif val.type == consts.SCV_STRING:
+        assert val.string is not None
+        await confirm_sc_val("string", val.string)
+    elif val.type == consts.SCV_SYMBOL:
+        assert val.symbol is not None
+        await confirm_sc_val("symbol", val.symbol)
+    elif val.type == consts.SCV_VEC:
+        if await should_show_more(
+            title,
+            ((ui.NORMAL, f"{title} contains {len(val.vec)} elements"),),
+            "Show full vec",
+            "should_show_vec",
+        ):
+            for idx, item in enumerate(val.vec):
+                await require_confirm_sc_val(parent_objects + [str(idx)], item)
+    elif val.type == consts.SCV_MAP:
+        if await should_show_more(
+            title,
+            ((ui.NORMAL, f"{title} contains {len(val.vec)} items"),),
+            "Show full map",
+            "should_show_map",
+        ):
+            for idx, item in enumerate(val.map):
+                assert item.key
+                assert item.value
+                await require_confirm_sc_val(
+                    parent_objects + [str(idx), "key"], item.key
+                )
+                await require_confirm_sc_val(
+                    parent_objects + [str(idx), "value"], item.value
+                )
+    elif val.type == consts.SCV_ADDRESS:
+        assert val.address
+        await confirm_sc_val("address", val.address.address)
+    elif val.type == consts.SCV_CONTRACT_INSTANCE:
+        pass
+    elif val.type == consts.SCV_LEDGER_KEY_CONTRACT_INSTANCE:
+        await confirm_sc_val("ledger key contract instance", "[no content]")
+    elif val.type == consts.SCV_LEDGER_KEY_NONCE:
+        await confirm_sc_val("ledger key nonce", str(val.nonce_key))
+    else:
+        raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
+
+
+async def confirm_authorized_function(
+    parent_objects: list[str], func: StellarSorobanAuthorizedFunction
+):
+    if func.type != consts.SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN:
+        raise DataError(f"Stellar: unsupported function type: {func.type}")
+    assert func.contract_fn
+
+    title = limit_str(".".join(parent_objects)) or "root invocation"
+    await layouts.confirm_properties(
+        "confirm_soroban_auth",
+        title,
+        (
+            (
+                "Contract Address",
+                func.contract_fn.contract_address.address,
+            ),
+            ("Function", func.contract_fn.function_name),
+        ),
+    )
+
+    # confirm args
+    for idx, arg in enumerate(func.contract_fn.args):
+        await require_confirm_sc_val(parent_objects + ["args", str(idx)], arg)
+
+
+async def require_confirm_soroban_invocation(
+    parent_objects: list[str],
+    invocation: StellarSorobanAuthorizedInvocation,
+) -> None:
+    # confirm contract function
+    await confirm_authorized_function(parent_objects, invocation.function)
+
+    title = limit_str(".".join(parent_objects)) or "root invocation"
+
+    # confirm sub_invocations
+    if await should_show_more(
+        title,
+        (
+            (
+                ui.NORMAL,
+                f"{title} contains {len(invocation.sub_invocations)} sub invocations",
+            ),
+        ),
+        "Show Sub Invocations",
+        "should_show_sub_invocations",
+    ):
+        for idx, sub_invocation in enumerate(invocation.sub_invocations):
+            await require_confirm_soroban_invocation(
+                parent_objects + ["subs", str(idx)],
+                sub_invocation,
+            )
+
+
 async def require_confirm_soroban_auth_info(
     nonce: int, signature_expiration_ledger: int
 ) -> None:
@@ -134,39 +310,9 @@ async def require_confirm_soroban_auth_info(
     )
 
 
-async def require_confirm_soroban_invocation(
-    invocation: StellarSorobanAuthorizedInvocation,
-) -> None:
-    # TODO: check func type
-    await layouts.confirm_properties(
-        "confirm_soroban_auth",
-        "Confirm Invocation",
-        (
-            ("Contract ID", invocation.function.contract_fn.contract_address.address),
-            ("Function", invocation.function.contract_fn.function_name),
-        ),
-    )
+def limit_str(s: str, limit: int = 16) -> str:
+    """Shortens string to show the last <limit> characters."""
+    if len(s) <= limit + 2:
+        return s
 
-    for idx, arg in enumerate(invocation.function.contract_fn.args):
-        await layouts.confirm_properties(
-            "confirm_soroban_auth",
-            f"Args {idx}",
-            (
-                ("Key", "key data"),
-                ("Value", "value data"),
-            ),
-        )
-
-
-# async def should_show_array(
-#         parent_objects: Iterable[str],
-#         data_type: str,
-#         size: int,
-# ) -> bool:
-#     para = ((ui.NORMAL, format_plural("Array of {count} {plural}", size, data_type)),)
-#     return await should_show_more(
-#         limit_str(".".join(parent_objects)),
-#         para,
-#         "Show full array",
-#         "should_show_array",
-#     )
+    return ".." + s[-limit:]

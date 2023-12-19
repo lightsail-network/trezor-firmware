@@ -492,9 +492,9 @@ def _read_sc_val(val: "SCVal") -> messages.StellarSCVal:
             type=messages.StellarSCValType.SCV_MAP,
             map=[
                 messages.StellarSCValMapEntry(
-                    key=_read_sc_val(k), value=_read_sc_val(v)
+                    key=_read_sc_val(item.key), value=_read_sc_val(item.val)
                 )
-                for k, v in val.map.sc_map
+                for item in val.map.sc_map
             ],
         )
     elif val.type == SCValType.SCV_ADDRESS:
