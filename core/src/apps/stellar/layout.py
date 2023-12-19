@@ -153,6 +153,7 @@ async def require_confirm_sc_val(
     elif val.type == StellarSCValType.SCV_ERROR:
         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
     elif val.type == StellarSCValType.SCV_U32:
+        # TODO: format number
         await confirm_sc_val("uint32", str(val.u32))
     elif val.type == StellarSCValType.SCV_I32:
         await confirm_sc_val("int32", str(val.i32))
