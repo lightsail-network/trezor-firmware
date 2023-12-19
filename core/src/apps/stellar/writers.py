@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 import apps.common.writers as writers
+from trezor.utils import ensure
 from trezor.wire import DataError
 
 # Reexporting to other modules
@@ -17,8 +18,28 @@ if TYPE_CHECKING:
         StellarSCVal,
         StellarSorobanAuthorizedFunction,
         StellarSorobanAuthorizedInvocation,
+        StellarContractExecutableType,
+        StellarSCAddress,
+        StellarSCAddressType,
     )
 
+
+def _write_int(w: Writer, n: int, bits: int, bigendian: bool) -> int:
+    ensure(-(2 ** (bits - 1)) <= n <= 2 ** (bits - 1) - 1, "overflow")
+    shifts = range(0, bits, 8)
+    if bigendian:
+        shifts = reversed(shifts)
+    for num in shifts:
+        w.append((n >> num) & 0xFF)
+    return bits // 8
+
+
+def write_int32(w: Writer, n: int) -> int:
+    return _write_int(w, n, 32, True)
+
+
+def write_int64(w: Writer, n: int) -> int:
+    return _write_int(w, n, 64, True)
 
 
 def write_string(w: Writer, s: AnyStr) -> None:
@@ -45,140 +66,118 @@ def write_pubkey(w: Writer, address: str) -> None:
     write_uint32(w, 0)
     writers.write_bytes_fixed(w, public_key_from_address(address), 32)
 
-# def write_sc_val(w: Writer, val: StellarSCVal) -> None:
-#     if val.type == StellarSCValType.SCV_BOOL:
-#         write_bool(w, val.bool)
-#     elif val.type == StellarSCValType.SCV_VOID:
-#         pass # nothing to write
-#     elif val.type == StellarSCValType.SCV_ERROR:
-#         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
-#     elif val.type == StellarSCValType.SCV_U32:
-#         write_uint32(w, val.u32)
-#     elif val.type == StellarSCValType.SCV_I32:
-#         await confirm_sc_val("int32", str(val.i32))
-#     elif val.type == StellarSCValType.SCV_U64:
-#         write_uint64(w, val.u64)
-#     elif val.type == StellarSCValType.SCV_I64:
-#         await confirm_sc_val("int64", str(val.i64))
-#     elif val.type == StellarSCValType.SCV_TIMEPOINT:
-#         write_uint64(w, val.timepoint)
-#     elif val.type == StellarSCValType.SCV_DURATION:
-#         write_uint64(w, val.duration)
-#     elif val.type == StellarSCValType.SCV_U128:
-#         assert val.u128
-#         value_bytes = val.u128.hi.to_bytes(
-#             8, "big", signed=False
-#         ) + val.u128.lo.to_bytes(8, "big", signed=False)
-#         v = int.from_bytes(value_bytes, "big", signed=False)
-#         await confirm_sc_val("uint128", str(v))
-#     elif val.type == StellarSCValType.SCV_I128:
-#         assert val.i128
-#         value_bytes = val.i128.hi.to_bytes(
-#             8, "big", signed=True
-#         ) + val.i128.lo.to_bytes(8, "big", signed=False)
-#         v = int.from_bytes(value_bytes, "big", signed=True)
-#         await confirm_sc_val("int128", str(v))
-#     elif val.type == StellarSCValType.SCV_U256:
-#         assert val.u256
-#         value_bytes = (
-#             val.u256.hi_hi.to_bytes(8, "big", signed=False)
-#             + val.u256.hi_lo.to_bytes(8, "big", signed=False)
-#             + val.u256.lo_hi.to_bytes(8, "big", signed=False)
-#             + val.u256.lo_lo.to_bytes(8, "big", signed=False)
-#         )
-#         v = int.from_bytes(value_bytes, "big", signed=False)
-#         await confirm_sc_val("uint256", str(v))
-#     elif val.type == StellarSCValType.SCV_I256:
-#         assert val.i256
-#         value_bytes = (
-#             val.i256.hi_hi.to_bytes(8, "big", signed=True)
-#             + val.i256.hi_lo.to_bytes(8, "big", signed=False)
-#             + val.i256.lo_hi.to_bytes(8, "big", signed=False)
-#             + val.i256.lo_lo.to_bytes(8, "big", signed=False)
-#         )
-#         v = int.from_bytes(value_bytes, "big", signed=True)
-#         await confirm_sc_val("int256", str(v))
-#     elif val.type == StellarSCValType.SCV_BYTES:
-#         assert val.bytes is not None
-#         await confirm_blob("confirm_sc_val", title, val.bytes, "val(bytes):")
-#     elif val.type == StellarSCValType.SCV_STRING:
-#         assert val.string is not None
-#         await confirm_sc_val("string", val.string)
-#     elif val.type == StellarSCValType.SCV_SYMBOL:
-#         assert val.symbol is not None
-#         await confirm_sc_val("symbol", val.symbol)
-#     elif val.type == StellarSCValType.SCV_VEC:
-#         if await should_show_more(
-#             title,
-#             ((ui.NORMAL, f"{title} contains {len(val.vec)} elements"),),
-#             "Show full vec",
-#             "should_show_vec",
-#         ):
-#             for idx, item in enumerate(val.vec):
-#                 await require_confirm_sc_val(parent_objects + [str(idx)], item)
-#     elif val.type == StellarSCValType.SCV_MAP:
-#         if await should_show_more(
-#             title,
-#             ((ui.NORMAL, f"{title} contains {len(val.ma)} items"),),
-#             "Show full map",
-#             "should_show_map",
-#         ):
-#             for idx, item in enumerate(val.map):
-#                 assert item.key
-#                 assert item.value
-#                 await require_confirm_sc_val(
-#                     parent_objects + [str(idx), "key"], item.key
-#                 )
-#                 await require_confirm_sc_val(
-#                     parent_objects + [str(idx), "value"], item.value
-#                 )
-#     elif val.type == StellarSCValType.SCV_ADDRESS:
-#         assert val.address
-#         await confirm_sc_val("address", val.address.address)
-#     elif val.type == StellarSCValType.SCV_CONTRACT_INSTANCE:
-#         assert val.instance
-#         props: list[tuple[str, str]] = [("val type:", "contract instance")]
-#         if val.instance.executable.type == StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM:
-#             assert val.instance.executable
-#             assert val.instance.executable.wasm_hash
-#             props.append(("executable.type", "CONTRACT_EXECUTABLE_WASM"))
-#             props.append(
-#                 (
-#                     "executable.wasm_hash",
-#                     ubinascii.hexlify(val.instance.executable.wasm_hash).decode(
-#                         "utf-8"
-#                     ),
-#                 )
-#             )
-#             pass
-#         elif val.instance.executable.type == StellarContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET:
-#             props.append(("executable.type", "CONTRACT_EXECUTABLE_STELLAR_ASSET"))
-#             pass
-#         else:
-#             raise DataError(
-#                 f"Stellar: Unsupported executable type: {val.instance.executable.type}"
-#             )
 
-#         await layouts.confirm_properties("confirm_sc_val", title, props)
+def write_contract(w: Writer, contract: str) -> None:
+    from .helpers import decode_contract
 
-#         if await should_show_more(
-#             title,
-#             ((ui.NORMAL, f"{title} contains storage"),),
-#             "Show full storage",
-#             "should_show_storage",
-#         ):
-#             for idx, item in enumerate(val.instance.storage):
-#                 assert item.key
-#                 assert item.value
-#                 await require_confirm_sc_val(
-#                     parent_objects + [str(idx), "storage", "key"], item.key
-#                 )
-#                 await require_confirm_sc_val(
-#                     parent_objects + [str(idx), "storage", "value"], item.value
-#                 )
-#     elif val.type == StellarSCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE:
-#         await confirm_sc_val("ledger key contract instance", "[no content]")
-#     elif val.type == StellarSCValType.SCV_LEDGER_KEY_NONCE:
-#         await confirm_sc_val("ledger key nonce", str(val.nonce_key))
-#     else:
-#         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
+    writers.write_bytes_fixed(w, decode_contract(contract), 32)
+
+
+def write_sc_address(w: Writer, address: StellarSCAddress) -> None:
+    w.write_uint32(address.type)
+    if address.type == StellarSCAddressType.SC_ADDRESS_TYPE_ACCOUNT:
+        write_pubkey(w, address.account)
+    elif address.type == StellarSCAddressType.SC_ADDRESS_TYPE_CONTRACT:
+        write_contract(w, address.contract)
+    else:
+        raise DataError(f"Stellar: Unsupported SC address type: {address.type}")
+
+
+def write_sc_val(w: Writer, val: StellarSCVal) -> None:
+    if val.type == StellarSCValType.SCV_BOOL:
+        write_bool(w, val.bool)
+    elif val.type == StellarSCValType.SCV_VOID:
+        pass  # nothing to write
+    elif val.type == StellarSCValType.SCV_ERROR:
+        raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
+    elif val.type == StellarSCValType.SCV_U32:
+        write_uint32(w, val.u32)
+    elif val.type == StellarSCValType.SCV_I32:
+        write_int32(w, val.i32)
+    elif val.type == StellarSCValType.SCV_U64:
+        write_uint64(w, val.u64)
+    elif val.type == StellarSCValType.SCV_I64:
+        write_int64(w, val.i64)
+    elif val.type == StellarSCValType.SCV_TIMEPOINT:
+        write_uint64(w, val.timepoint)
+    elif val.type == StellarSCValType.SCV_DURATION:
+        write_uint64(w, val.duration)
+    elif val.type == StellarSCValType.SCV_U128:
+        assert val.u128
+        write_uint32(w, val.u128.hi)
+        write_uint32(w, val.u128.lo)
+    elif val.type == StellarSCValType.SCV_I128:
+        assert val.i128
+        write_int32(w, val.i128.hi)
+        write_uint32(w, val.i128.lo)
+    elif val.type == StellarSCValType.SCV_U256:
+        assert val.u256
+        write_uint64(w, val.u256.hi_hi)
+        write_uint64(w, val.u256.hi_lo)
+        write_uint64(w, val.u256.lo_hi)
+        write_uint64(w, val.u256.lo_lo)
+    elif val.type == StellarSCValType.SCV_I256:
+        assert val.i256
+        write_int64(w, val.i256.hi_hi)
+        write_uint64(w, val.i256.hi_lo)
+        write_uint64(w, val.i256.lo_hi)
+        write_uint64(w, val.i256.lo_lo)
+    elif val.type == StellarSCValType.SCV_BYTES:
+        assert val.bytes is not None
+        # if data len isn't a multiple of 4, add padding bytes
+        write_bytes_fixed(
+            w,
+            val.bytes + bytes([0] * (4 - len(val.bytes) % 4)),
+            len(val.bytes) + (4 - len(val.bytes) % 4),
+        )
+    elif val.type == StellarSCValType.SCV_STRING:
+        write_string(w, val.string)
+    elif val.type == StellarSCValType.SCV_SYMBOL:
+        write_string(w, val.symbol)
+    elif val.type == StellarSCValType.SCV_VEC:
+        write_bool(w, True)
+        write_uint32(w, len(val.vec))
+        for item in val.vec:
+            write_sc_val(w, item)
+    elif val.type == StellarSCValType.SCV_MAP:
+        write_bool(w, True)
+        write_uint32(w, len(val.map))
+        for item in val.map:
+            write_sc_val(w, item.key)
+            write_sc_val(w, item.value)
+    elif val.type == StellarSCValType.SCV_ADDRESS:
+        assert val.address
+        write_sc_address(w, val.address)
+    elif val.type == StellarSCValType.SCV_CONTRACT_INSTANCE:
+        assert val.instance
+        write_uint32(w, val.instance.type)
+        if (
+            val.instance.executable.type
+            == StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM
+        ):
+            assert val.instance.executable
+            assert val.instance.executable.wasm_hash
+            write_bytes_fixed(w, val.instance.executable.wasm_hash, 32)
+        elif (
+            val.instance.executable.type
+            == StellarContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET
+        ):
+            pass  # nothing to write
+        else:
+            raise DataError(
+                f"Stellar: Unsupported executable type: {val.instance.executable.type}"
+            )
+        if val.instance.storage:
+            write_bool(w, True)
+            write_uint32(w, len(val.instance.storage))
+            for item in val.instance.storage:
+                write_sc_val(w, item.key)
+                write_sc_val(w, item.value)
+        else:
+            write_bool(w, False)
+    elif val.type == StellarSCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE:
+        pass  # nothing to write
+    elif val.type == StellarSCValType.SCV_LEDGER_KEY_NONCE:
+        write_int64(w, val.nonce)
+    else:
+        raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
