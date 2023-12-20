@@ -107,7 +107,7 @@ async def sign_tx(msg: StellarSignTx, keychain: Keychain) -> StellarSignedTx:
     # FINAL
     # ---------------------------------
     # 4 null bytes representing a (currently unused) empty union
-    writers.write_uint32(w, 0)
+    writers.write_int32(w, 0)
     # final confirm
     await layout.require_confirm_final(msg.fee, num_operations)
 

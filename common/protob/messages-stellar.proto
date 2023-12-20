@@ -365,7 +365,6 @@ message StellarSCVal {
     message StellarSCContractInstance {
         required StellarContractExecutable executable = 1;
         repeated StellarSCValMapEntry storage = 2;
-
     }
 
     enum StellarSCValType {
@@ -454,6 +453,15 @@ message StellarInvokeHostFunctionOp {
     optional string source_account = 1; // (optional) source account address
     required StellarHostFunction function = 2;
     repeated StellarSorobanAuthorizationEntry auth = 3;
+}
+
+message StellarTransactionExtRequest {
+}
+
+message StellarTransactionExt {
+    // For soroban transactions, v = 1, otherwise v = 0
+    required sint32 v = 1;
+    optional bytes soroban_data = 2; // (optional) soroban data, exists only if v == 1
 }
 
 /**

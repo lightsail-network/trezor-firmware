@@ -7545,6 +7545,27 @@ class StellarInvokeHostFunctionOp(protobuf.MessageType):
         self.source_account = source_account
 
 
+class StellarTransactionExtRequest(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+
+
+class StellarTransactionExt(protobuf.MessageType):
+    MESSAGE_WIRE_TYPE = None
+    FIELDS = {
+        1: protobuf.Field("v", "sint32", repeated=False, required=True),
+        2: protobuf.Field("soroban_data", "bytes", repeated=False, required=False, default=None),
+    }
+
+    def __init__(
+        self,
+        *,
+        v: "int",
+        soroban_data: Optional["bytes"] = None,
+    ) -> None:
+        self.v = v
+        self.soroban_data = soroban_data
+
+
 class StellarSignSorobanAuthorization(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = 238
     FIELDS = {

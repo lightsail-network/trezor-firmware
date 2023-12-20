@@ -10575,6 +10575,307 @@ impl ::protobuf::reflect::ProtobufValue for StellarInvokeHostFunctionOp {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
+// @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarTransactionExtRequest)
+#[derive(PartialEq,Clone,Default,Debug)]
+pub struct StellarTransactionExtRequest {
+    // special fields
+    // @@protoc_insertion_point(special_field:hw.trezor.messages.stellar.StellarTransactionExtRequest.special_fields)
+    pub special_fields: ::protobuf::SpecialFields,
+}
+
+impl<'a> ::std::default::Default for &'a StellarTransactionExtRequest {
+    fn default() -> &'a StellarTransactionExtRequest {
+        <StellarTransactionExtRequest as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl StellarTransactionExtRequest {
+    pub fn new() -> StellarTransactionExtRequest {
+        ::std::default::Default::default()
+    }
+
+    fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
+        let mut fields = ::std::vec::Vec::with_capacity(0);
+        let mut oneofs = ::std::vec::Vec::with_capacity(0);
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StellarTransactionExtRequest>(
+            "StellarTransactionExtRequest",
+            fields,
+            oneofs,
+        )
+    }
+}
+
+impl ::protobuf::Message for StellarTransactionExtRequest {
+    const NAME: &'static str = "StellarTransactionExtRequest";
+
+    fn is_initialized(&self) -> bool {
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
+        while let Some(tag) = is.read_raw_tag_or_eof()? {
+            match tag {
+                tag => {
+                    ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u64 {
+        let mut my_size = 0;
+        my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
+        self.special_fields.cached_size().set(my_size as u32);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
+        os.write_unknown_fields(self.special_fields.unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn special_fields(&self) -> &::protobuf::SpecialFields {
+        &self.special_fields
+    }
+
+    fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
+        &mut self.special_fields
+    }
+
+    fn new() -> StellarTransactionExtRequest {
+        StellarTransactionExtRequest::new()
+    }
+
+    fn clear(&mut self) {
+        self.special_fields.clear();
+    }
+
+    fn default_instance() -> &'static StellarTransactionExtRequest {
+        static instance: StellarTransactionExtRequest = StellarTransactionExtRequest {
+            special_fields: ::protobuf::SpecialFields::new(),
+        };
+        &instance
+    }
+}
+
+impl ::protobuf::MessageFull for StellarTransactionExtRequest {
+    fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("StellarTransactionExtRequest").unwrap()).clone()
+    }
+}
+
+impl ::std::fmt::Display for StellarTransactionExtRequest {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for StellarTransactionExtRequest {
+    type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
+}
+
+// @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarTransactionExt)
+#[derive(PartialEq,Clone,Default,Debug)]
+pub struct StellarTransactionExt {
+    // message fields
+    // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarTransactionExt.v)
+    pub v: ::std::option::Option<i32>,
+    // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarTransactionExt.soroban_data)
+    pub soroban_data: ::std::option::Option<::std::vec::Vec<u8>>,
+    // special fields
+    // @@protoc_insertion_point(special_field:hw.trezor.messages.stellar.StellarTransactionExt.special_fields)
+    pub special_fields: ::protobuf::SpecialFields,
+}
+
+impl<'a> ::std::default::Default for &'a StellarTransactionExt {
+    fn default() -> &'a StellarTransactionExt {
+        <StellarTransactionExt as ::protobuf::Message>::default_instance()
+    }
+}
+
+impl StellarTransactionExt {
+    pub fn new() -> StellarTransactionExt {
+        ::std::default::Default::default()
+    }
+
+    // required sint32 v = 1;
+
+    pub fn v(&self) -> i32 {
+        self.v.unwrap_or(0)
+    }
+
+    pub fn clear_v(&mut self) {
+        self.v = ::std::option::Option::None;
+    }
+
+    pub fn has_v(&self) -> bool {
+        self.v.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_v(&mut self, v: i32) {
+        self.v = ::std::option::Option::Some(v);
+    }
+
+    // optional bytes soroban_data = 2;
+
+    pub fn soroban_data(&self) -> &[u8] {
+        match self.soroban_data.as_ref() {
+            Some(v) => v,
+            None => &[],
+        }
+    }
+
+    pub fn clear_soroban_data(&mut self) {
+        self.soroban_data = ::std::option::Option::None;
+    }
+
+    pub fn has_soroban_data(&self) -> bool {
+        self.soroban_data.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_soroban_data(&mut self, v: ::std::vec::Vec<u8>) {
+        self.soroban_data = ::std::option::Option::Some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_soroban_data(&mut self) -> &mut ::std::vec::Vec<u8> {
+        if self.soroban_data.is_none() {
+            self.soroban_data = ::std::option::Option::Some(::std::vec::Vec::new());
+        }
+        self.soroban_data.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_soroban_data(&mut self) -> ::std::vec::Vec<u8> {
+        self.soroban_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
+    }
+
+    fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
+        let mut fields = ::std::vec::Vec::with_capacity(2);
+        let mut oneofs = ::std::vec::Vec::with_capacity(0);
+        fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+            "v",
+            |m: &StellarTransactionExt| { &m.v },
+            |m: &mut StellarTransactionExt| { &mut m.v },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+            "soroban_data",
+            |m: &StellarTransactionExt| { &m.soroban_data },
+            |m: &mut StellarTransactionExt| { &mut m.soroban_data },
+        ));
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StellarTransactionExt>(
+            "StellarTransactionExt",
+            fields,
+            oneofs,
+        )
+    }
+}
+
+impl ::protobuf::Message for StellarTransactionExt {
+    const NAME: &'static str = "StellarTransactionExt";
+
+    fn is_initialized(&self) -> bool {
+        if self.v.is_none() {
+            return false;
+        }
+        true
+    }
+
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
+        while let Some(tag) = is.read_raw_tag_or_eof()? {
+            match tag {
+                8 => {
+                    self.v = ::std::option::Option::Some(is.read_sint32()?);
+                },
+                18 => {
+                    self.soroban_data = ::std::option::Option::Some(is.read_bytes()?);
+                },
+                tag => {
+                    ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
+                },
+            };
+        }
+        ::std::result::Result::Ok(())
+    }
+
+    // Compute sizes of nested messages
+    #[allow(unused_variables)]
+    fn compute_size(&self) -> u64 {
+        let mut my_size = 0;
+        if let Some(v) = self.v {
+            my_size += ::protobuf::rt::sint32_size(1, v);
+        }
+        if let Some(v) = self.soroban_data.as_ref() {
+            my_size += ::protobuf::rt::bytes_size(2, &v);
+        }
+        my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
+        self.special_fields.cached_size().set(my_size as u32);
+        my_size
+    }
+
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
+        if let Some(v) = self.v {
+            os.write_sint32(1, v)?;
+        }
+        if let Some(v) = self.soroban_data.as_ref() {
+            os.write_bytes(2, v)?;
+        }
+        os.write_unknown_fields(self.special_fields.unknown_fields())?;
+        ::std::result::Result::Ok(())
+    }
+
+    fn special_fields(&self) -> &::protobuf::SpecialFields {
+        &self.special_fields
+    }
+
+    fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
+        &mut self.special_fields
+    }
+
+    fn new() -> StellarTransactionExt {
+        StellarTransactionExt::new()
+    }
+
+    fn clear(&mut self) {
+        self.v = ::std::option::Option::None;
+        self.soroban_data = ::std::option::Option::None;
+        self.special_fields.clear();
+    }
+
+    fn default_instance() -> &'static StellarTransactionExt {
+        static instance: StellarTransactionExt = StellarTransactionExt {
+            v: ::std::option::Option::None,
+            soroban_data: ::std::option::Option::None,
+            special_fields: ::protobuf::SpecialFields::new(),
+        };
+        &instance
+    }
+}
+
+impl ::protobuf::MessageFull for StellarTransactionExt {
+    fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
+        static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("StellarTransactionExt").unwrap()).clone()
+    }
+}
+
+impl ::std::fmt::Display for StellarTransactionExt {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        ::protobuf::text_format::fmt(self, f)
+    }
+}
+
+impl ::protobuf::reflect::ProtobufValue for StellarTransactionExt {
+    type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
+}
+
 // @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarSignSorobanAuthorization)
 #[derive(PartialEq,Clone,Default,Debug)]
 pub struct StellarSignSorobanAuthorization {
@@ -11129,16 +11430,18 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     nOp\x12%\n\x0esource_account\x18\x01\x20\x01(\tR\rsourceAccount\x12K\n\
     \x08function\x18\x02\x20\x02(\x0b2/.hw.trezor.messages.stellar.StellarHo\
     stFunctionR\x08function\x12P\n\x04auth\x18\x03\x20\x03(\x0b2<.hw.trezor.\
-    messages.stellar.StellarSorobanAuthorizationEntryR\x04auth\"\xa3\x02\n\
-    \x1fStellarSignSorobanAuthorization\x12\x1b\n\taddress_n\x18\x01\x20\x03\
-    (\rR\x08addressN\x12-\n\x12network_passphrase\x18\x02\x20\x02(\tR\x11net\
-    workPassphrase\x12\x14\n\x05nonce\x18\x03\x20\x02(\x12R\x05nonce\x12>\n\
-    \x1bsignature_expiration_ledger\x18\x04\x20\x02(\rR\x19signatureExpirati\
-    onLedger\x12^\n\ninvocation\x18\x05\x20\x02(\x0b2>.hw.trezor.messages.st\
-    ellar.StellarSorobanAuthorizedInvocationR\ninvocation*=\n\x10StellarAsse\
-    tType\x12\n\n\x06NATIVE\x10\0\x12\r\n\tALPHANUM4\x10\x01\x12\x0e\n\nALPH\
-    ANUM12\x10\x02B;\n#com.satoshilabs.trezor.lib.protobufB\x14TrezorMessage\
-    Stellar\
+    messages.stellar.StellarSorobanAuthorizationEntryR\x04auth\"\x1e\n\x1cSt\
+    ellarTransactionExtRequest\"H\n\x15StellarTransactionExt\x12\x0c\n\x01v\
+    \x18\x01\x20\x02(\x11R\x01v\x12!\n\x0csoroban_data\x18\x02\x20\x01(\x0cR\
+    \x0bsorobanData\"\xa3\x02\n\x1fStellarSignSorobanAuthorization\x12\x1b\n\
+    \taddress_n\x18\x01\x20\x03(\rR\x08addressN\x12-\n\x12network_passphrase\
+    \x18\x02\x20\x02(\tR\x11networkPassphrase\x12\x14\n\x05nonce\x18\x03\x20\
+    \x02(\x12R\x05nonce\x12>\n\x1bsignature_expiration_ledger\x18\x04\x20\
+    \x02(\rR\x19signatureExpirationLedger\x12^\n\ninvocation\x18\x05\x20\x02\
+    (\x0b2>.hw.trezor.messages.stellar.StellarSorobanAuthorizedInvocationR\n\
+    invocation*=\n\x10StellarAssetType\x12\n\n\x06NATIVE\x10\0\x12\r\n\tALPH\
+    ANUM4\x10\x01\x12\x0e\n\nALPHANUM12\x10\x02B;\n#com.satoshilabs.trezor.l\
+    ib.protobufB\x14TrezorMessageStellar\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file
@@ -11156,7 +11459,7 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
     file_descriptor.get(|| {
         let generated_file_descriptor = generated_file_descriptor_lazy.get(|| {
             let mut deps = ::std::vec::Vec::with_capacity(0);
-            let mut messages = ::std::vec::Vec::with_capacity(38);
+            let mut messages = ::std::vec::Vec::with_capacity(40);
             messages.push(StellarAsset::generated_message_descriptor_data());
             messages.push(StellarGetAddress::generated_message_descriptor_data());
             messages.push(StellarAddress::generated_message_descriptor_data());
@@ -11186,6 +11489,8 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
             messages.push(StellarSorobanCredentials::generated_message_descriptor_data());
             messages.push(StellarSorobanAuthorizationEntry::generated_message_descriptor_data());
             messages.push(StellarInvokeHostFunctionOp::generated_message_descriptor_data());
+            messages.push(StellarTransactionExtRequest::generated_message_descriptor_data());
+            messages.push(StellarTransactionExt::generated_message_descriptor_data());
             messages.push(StellarSignSorobanAuthorization::generated_message_descriptor_data());
             messages.push(stellar_scval::StellarUInt128Parts::generated_message_descriptor_data());
             messages.push(stellar_scval::StellarInt128Parts::generated_message_descriptor_data());
