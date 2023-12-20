@@ -341,4 +341,5 @@ async def confirm_invoke_host_function_op(op: StellarInvokeHostFunctionOp) -> No
     if op.function.type != StellarHostFunctionType.HOST_FUNCTION_TYPE_INVOKE_CONTRACT:
         raise DataError(f"Stellar: unsupported host function type: {op.function.type}")
     assert op.function.invoke_contract
-    await confirm_invoke_contract_args([], op.function.invoke_contract)
+    await confirm_invoke_contract_args(["contract"], op.function.invoke_contract)
+    # TODO: auth

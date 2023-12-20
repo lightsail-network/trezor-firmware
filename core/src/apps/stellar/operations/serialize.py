@@ -227,9 +227,12 @@ def write_soroban_credentials(
     w: Writer, credentials: StellarSorobanCredentials
 ) -> None:
     write_uint32(w, credentials.type)
-    if credentials == StellarSorobanCredentialsType.SOROBAN_CREDENTIALS_SOURCE_ACCOUNT:
+    if (
+        credentials.type
+        == StellarSorobanCredentialsType.SOROBAN_CREDENTIALS_SOURCE_ACCOUNT
+    ):
         pass  # nothing to write
-    elif credentials == StellarSorobanCredentialsType.SOROBAN_CREDENTIALS_ADDRESS:
+    elif credentials.type == StellarSorobanCredentialsType.SOROBAN_CREDENTIALS_ADDRESS:
         assert credentials.address
         write_soroban_address_credentials(w, credentials.address)
     else:

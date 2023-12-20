@@ -40,6 +40,7 @@ if TYPE_CHECKING:
         messages.StellarPaymentOp,
         messages.StellarSetOptionsOp,
         messages.StellarClaimClaimableBalanceOp,
+        messages.StellarInvokeHostFunctionOp,
     ]
 
 try:
@@ -55,6 +56,7 @@ try:
         CreatePassiveSellOffer,
         HashMemo,
         IdMemo,
+        InvokeHostFunction,
         LiquidityPoolAsset,
         ManageBuyOffer,
         ManageData,
@@ -74,10 +76,14 @@ try:
         TrustLineEntryFlag,
     )
     from stellar_sdk.address import AddressType as StellarAddressType
+    from stellar_sdk.xdr.host_function import HostFunction
+    from stellar_sdk.xdr.host_function_type import HostFunctionType
     from stellar_sdk.xdr.invoke_contract_args import InvokeContractArgs
     from stellar_sdk.xdr.sc_address import SCAddress
     from stellar_sdk.xdr.sc_val import SCVal
     from stellar_sdk.xdr.sc_val_type import SCValType
+    from stellar_sdk.xdr.soroban_address_credentials import SorobanAddressCredentials
+    from stellar_sdk.xdr.soroban_authorization_entry import SorobanAuthorizationEntry
     from stellar_sdk.xdr.soroban_authorized_function import SorobanAuthorizedFunction
     from stellar_sdk.xdr.soroban_authorized_function_type import (
         SorobanAuthorizedFunctionType,
@@ -85,6 +91,8 @@ try:
     from stellar_sdk.xdr.soroban_authorized_invocation import (
         SorobanAuthorizedInvocation,
     )
+    from stellar_sdk.xdr.soroban_credentials import SorobanCredentials
+    from stellar_sdk.xdr.soroban_credentials_type import SorobanCredentialsType
 
     HAVE_STELLAR_SDK = True
     DEFAULT_NETWORK_PASSPHRASE = Network.PUBLIC_NETWORK_PASSPHRASE
@@ -299,6 +307,12 @@ def _read_operation(op: "Operation") -> "StellarMessageType":
         return messages.StellarClaimClaimableBalanceOp(
             source_account=source_account,
             balance_id=bytes.fromhex(op.balance_id),
+        )
+    if isinstance(op, InvokeHostFunction):
+        return messages.StellarInvokeHostFunctionOp(
+            source_account=source_account,
+            function=_read_host_function(op.host_function),
+            auth=[_read_authorization_entry(entry) for entry in op.auth],
         )
     raise ValueError(f"Unknown operation type: {op.__class__.__name__}")
 
@@ -583,6 +597,54 @@ def _read_authorized_function(
         )
     else:
         raise ValueError(f"Unsupported SorobanAuthorizedFunction type: {function.type}")
+
+
+def _read_address_credentials(
+    address_credentials: "SorobanAddressCredentials",
+) -> messages.StellarSorobanAddressCredentials:
+    return messages.StellarSorobanAddressCredentials(
+        address=_read_sc_address(address_credentials.address),
+        nonce=address_credentials.nonce.int64,
+        signature_expiration_ledger=address_credentials.signature_expiration_ledger.uint32,
+        signature=_read_sc_val(address_credentials.signature),
+    )
+
+
+def _read_credentials(
+    credentials: "SorobanCredentials",
+) -> messages.StellarSorobanCredentials:
+    if credentials.type == SorobanCredentialsType.SOROBAN_CREDENTIALS_SOURCE_ACCOUNT:
+        return messages.StellarSorobanCredentials(
+            type=messages.StellarSorobanCredentialsType.SOROBAN_CREDENTIALS_SOURCE_ACCOUNT
+        )
+    elif credentials.type == SorobanCredentialsType.SOROBAN_CREDENTIALS_ADDRESS:
+        return messages.StellarSorobanCredentials(
+            type=messages.StellarSorobanCredentialsType.SOROBAN_CREDENTIALS_ADDRESS,
+            address=_read_address_credentials(credentials.address),
+        )
+    else:
+        raise ValueError(f"Unsupported SorobanCredentials type: {credentials.type}")
+
+
+def _read_authorization_entry(
+    entry: "SorobanAuthorizationEntry",
+) -> messages.StellarSorobanAuthorizationEntry:
+    return messages.StellarSorobanAuthorizationEntry(
+        credentials=_read_credentials(entry.credentials),
+        root_invocation=from_authorized_invocation(entry.root_invocation),
+    )
+
+
+def _read_host_function(
+    host_function: "HostFunction",
+) -> messages.StellarHostFunction:
+    if host_function.type != HostFunctionType.HOST_FUNCTION_TYPE_INVOKE_CONTRACT:
+        raise ValueError(f"Unsupported host function type: {host_function.type}")
+
+    return messages.StellarHostFunction(
+        type=messages.StellarHostFunctionType.HOST_FUNCTION_TYPE_INVOKE_CONTRACT,
+        invoke_contract=_read_invoke_contract_args(host_function.invoke_contract),
+    )
 
 
 def from_authorized_invocation(
