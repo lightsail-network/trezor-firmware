@@ -98,7 +98,7 @@ DEFAULT_BIP32_PATH = "m/44h/148h/0h"
 
 def from_envelope(
     envelope: "TransactionEnvelope",
-) -> Tuple[messages.StellarSignTx, List["StellarMessageType"]]:
+) -> Tuple[messages.StellarSignTx, List["StellarMessageType"], messages.StellarTxExt]:
     """Parses transaction envelope into a map with the following keys:
     tx - a StellarSignTx describing the transaction header
     operations - an array of protobuf message objects for each operation
@@ -148,7 +148,15 @@ def from_envelope(
     )
 
     operations = [_read_operation(op) for op in parsed_tx.operations]
-    return tx, operations
+
+    if parsed_tx.soroban_data:
+        tx_ext = messages.StellarTxExt(
+            v=1,
+            soroban_data=parsed_tx.soroban_data.to_xdr_bytes(),
+        )
+    else:
+        tx_ext = messages.StellarTxExt(v=0)
+    return tx, operations, tx_ext
 
 
 def _read_operation(op: "Operation") -> "StellarMessageType":
@@ -354,6 +362,7 @@ def sign_tx(
     client: "TrezorClient",
     tx: messages.StellarSignTx,
     operations: List["StellarMessageType"],
+    tx_ext: messages.StellarTxExt,
     address_n: "Address",
     network_passphrase: str = DEFAULT_NETWORK_PASSPHRASE,
 ) -> messages.StellarSignedTx:
@@ -366,7 +375,8 @@ def sign_tx(
     # 2. Send the tx header to the device
     # 3. Receive a StellarTxOpRequest message
     # 4. Send operations one by one until all operations have been sent. If there are more operations to sign, the device will send a StellarTxOpRequest message
-    # 5. The final message received will be StellarSignedTx which is returned from this method
+    # 5. Send tx_ext to the device
+    # 6. The final message received will be StellarSignedTx which is returned from this method
     resp = client.call(tx)
     try:
         while isinstance(resp, messages.StellarTxOpRequest):
@@ -376,6 +386,9 @@ def sign_tx(
         raise exceptions.TrezorException(
             "Reached end of operations without a signature."
         ) from None
+    
+    if isinstance(resp, messages.StellarTxExtRequest):
+        resp = client.call(tx_ext)
 
     if not isinstance(resp, messages.StellarSignedTx):
         raise exceptions.TrezorException(

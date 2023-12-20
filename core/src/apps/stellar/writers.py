@@ -25,7 +25,8 @@ if TYPE_CHECKING:
         StellarSCVal,
         StellarSorobanAuthorizedFunction,
         StellarSorobanAuthorizedInvocation,
-        StellarInvokeContractArgs
+        StellarInvokeContractArgs,
+        StellarTxExt
     )
     from trezor.utils import Writer
 
@@ -249,3 +250,12 @@ def write_soroban_auth_info(
     write_int64(w, nonce)
     write_uint32(w, signature_expiration_ledger)
     write_soroban_authorized_invocation(w, invocation)
+
+def write_tx_ext(w: Writer, tx_ext: StellarTxExt) -> None:
+    if tx_ext.type == 0:
+        pass # nothing to write
+    elif tx_ext.type == 1:
+        assert tx_ext.soroban_data
+        write_bytes_fixed(w, tx_ext.soroban_data, len(tx_ext.soroban_data))
+    else:
+        raise DataError(f"Stellar: unsupported tx ext type: {tx_ext.type}")

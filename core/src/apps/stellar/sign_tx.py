@@ -15,9 +15,10 @@ async def sign_tx(msg: StellarSignTx, keychain: Keychain) -> StellarSignedTx:
     from trezor.crypto.curve import ed25519
     from trezor.crypto.hashlib import sha256
     from trezor.enums import StellarMemoType
-    from trezor.messages import StellarSignedTx, StellarTxOpRequest
+    from trezor.messages import StellarSignedTx, StellarTxOpRequest, StellarTxExtRequest, StellarTxExt
     from trezor.wire import DataError, ProcessError
     from trezor.wire.context import call_any
+    from trezor.enums import MessageType
 
     from apps.common import paths, seed
 
@@ -104,10 +105,13 @@ async def sign_tx(msg: StellarSignTx, keychain: Keychain) -> StellarSignedTx:
         await process_operation(w, op)  # type: ignore [Argument of type "MessageType" cannot be assigned to parameter "op" of type "StellarMessageType" in function "process_operation"]
 
     # ---------------------------------
+    # Transaction Ext
+    # ---------------------------------
+    op = await call_any(StellarTxExtRequest(), MessageType.StellarTxExt)
+        
+    # ---------------------------------
     # FINAL
     # ---------------------------------
-    # 4 null bytes representing a (currently unused) empty union
-    writers.write_int32(w, 0)
     # final confirm
     await layout.require_confirm_final(msg.fee, num_operations)
 

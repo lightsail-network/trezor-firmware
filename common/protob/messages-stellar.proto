@@ -459,7 +459,7 @@ message StellarTxExtRequest {
 }
 
 message StellarTxExt {
-    // For soroban transactions, v = 1, otherwise v = 0
+    // For soroban transactions, v = 1
     required sint32 v = 1;
     optional bytes soroban_data = 2; // (optional) soroban data, exists only if v == 1
 }
