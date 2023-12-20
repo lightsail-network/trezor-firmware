@@ -25,6 +25,7 @@ if TYPE_CHECKING:
         StellarSCVal,
         StellarSorobanAuthorizedFunction,
         StellarSorobanAuthorizedInvocation,
+        StellarInvokeContractArgs
     )
     from trezor.utils import Writer
 
@@ -203,6 +204,13 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
 
 
+def write_invoke_contract_args(w: Writer, invoke_contract_args: StellarInvokeContractArgs) -> None:
+    write_sc_address(w, invoke_contract_args.contract_address)
+    write_string(w, invoke_contract_args.function_name)
+    write_uint32(w, len(invoke_contract_args.args))
+    for arg in invoke_contract_args.args:
+        write_sc_val(w, arg)
+
 def write_soroban_authorized_function(
     w: Writer, func: StellarSorobanAuthorizedFunction
 ) -> None:
@@ -212,13 +220,10 @@ def write_soroban_authorized_function(
     ):
         raise DataError(f"Stellar: unsupported function type: {func.type}")
     assert func.contract_fn
-
     write_uint32(w, func.type)
-    write_sc_address(w, func.contract_fn.contract_address)
-    write_string(w, func.contract_fn.function_name)
-    write_uint32(w, len(func.contract_fn.args))
-    for arg in func.contract_fn.args:
-        write_sc_val(w, arg)
+    write_invoke_contract_args(w, func.contract_fn)
+    
+    
 
 
 def write_soroban_authorized_invocation(
