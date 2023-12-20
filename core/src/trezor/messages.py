@@ -5933,13 +5933,13 @@ if TYPE_CHECKING:
         def is_type_of(cls, msg: Any) -> TypeGuard["StellarInvokeHostFunctionOp"]:
             return isinstance(msg, cls)
 
-    class StellarTransactionExtRequest(protobuf.MessageType):
+    class StellarTxExtRequest(protobuf.MessageType):
 
         @classmethod
-        def is_type_of(cls, msg: Any) -> TypeGuard["StellarTransactionExtRequest"]:
+        def is_type_of(cls, msg: Any) -> TypeGuard["StellarTxExtRequest"]:
             return isinstance(msg, cls)
 
-    class StellarTransactionExt(protobuf.MessageType):
+    class StellarTxExt(protobuf.MessageType):
         v: "int"
         soroban_data: "bytes | None"
 
@@ -5952,7 +5952,7 @@ if TYPE_CHECKING:
             pass
 
         @classmethod
-        def is_type_of(cls, msg: Any) -> TypeGuard["StellarTransactionExt"]:
+        def is_type_of(cls, msg: Any) -> TypeGuard["StellarTxExt"]:
             return isinstance(msg, cls)
 
     class StellarSignSorobanAuthorization(protobuf.MessageType):

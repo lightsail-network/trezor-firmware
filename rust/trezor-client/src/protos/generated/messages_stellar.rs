@@ -10575,38 +10575,38 @@ impl ::protobuf::reflect::ProtobufValue for StellarInvokeHostFunctionOp {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
-// @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarTransactionExtRequest)
+// @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarTxExtRequest)
 #[derive(PartialEq,Clone,Default,Debug)]
-pub struct StellarTransactionExtRequest {
+pub struct StellarTxExtRequest {
     // special fields
-    // @@protoc_insertion_point(special_field:hw.trezor.messages.stellar.StellarTransactionExtRequest.special_fields)
+    // @@protoc_insertion_point(special_field:hw.trezor.messages.stellar.StellarTxExtRequest.special_fields)
     pub special_fields: ::protobuf::SpecialFields,
 }
 
-impl<'a> ::std::default::Default for &'a StellarTransactionExtRequest {
-    fn default() -> &'a StellarTransactionExtRequest {
-        <StellarTransactionExtRequest as ::protobuf::Message>::default_instance()
+impl<'a> ::std::default::Default for &'a StellarTxExtRequest {
+    fn default() -> &'a StellarTxExtRequest {
+        <StellarTxExtRequest as ::protobuf::Message>::default_instance()
     }
 }
 
-impl StellarTransactionExtRequest {
-    pub fn new() -> StellarTransactionExtRequest {
+impl StellarTxExtRequest {
+    pub fn new() -> StellarTxExtRequest {
         ::std::default::Default::default()
     }
 
     fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
         let mut fields = ::std::vec::Vec::with_capacity(0);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
-        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StellarTransactionExtRequest>(
-            "StellarTransactionExtRequest",
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StellarTxExtRequest>(
+            "StellarTxExtRequest",
             fields,
             oneofs,
         )
     }
 }
 
-impl ::protobuf::Message for StellarTransactionExtRequest {
-    const NAME: &'static str = "StellarTransactionExtRequest";
+impl ::protobuf::Message for StellarTxExtRequest {
+    const NAME: &'static str = "StellarTxExtRequest";
 
     fn is_initialized(&self) -> bool {
         true
@@ -10645,60 +10645,60 @@ impl ::protobuf::Message for StellarTransactionExtRequest {
         &mut self.special_fields
     }
 
-    fn new() -> StellarTransactionExtRequest {
-        StellarTransactionExtRequest::new()
+    fn new() -> StellarTxExtRequest {
+        StellarTxExtRequest::new()
     }
 
     fn clear(&mut self) {
         self.special_fields.clear();
     }
 
-    fn default_instance() -> &'static StellarTransactionExtRequest {
-        static instance: StellarTransactionExtRequest = StellarTransactionExtRequest {
+    fn default_instance() -> &'static StellarTxExtRequest {
+        static instance: StellarTxExtRequest = StellarTxExtRequest {
             special_fields: ::protobuf::SpecialFields::new(),
         };
         &instance
     }
 }
 
-impl ::protobuf::MessageFull for StellarTransactionExtRequest {
+impl ::protobuf::MessageFull for StellarTxExtRequest {
     fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
         static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
-        descriptor.get(|| file_descriptor().message_by_package_relative_name("StellarTransactionExtRequest").unwrap()).clone()
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("StellarTxExtRequest").unwrap()).clone()
     }
 }
 
-impl ::std::fmt::Display for StellarTransactionExtRequest {
+impl ::std::fmt::Display for StellarTxExtRequest {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         ::protobuf::text_format::fmt(self, f)
     }
 }
 
-impl ::protobuf::reflect::ProtobufValue for StellarTransactionExtRequest {
+impl ::protobuf::reflect::ProtobufValue for StellarTxExtRequest {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
-// @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarTransactionExt)
+// @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarTxExt)
 #[derive(PartialEq,Clone,Default,Debug)]
-pub struct StellarTransactionExt {
+pub struct StellarTxExt {
     // message fields
-    // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarTransactionExt.v)
+    // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarTxExt.v)
     pub v: ::std::option::Option<i32>,
-    // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarTransactionExt.soroban_data)
+    // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarTxExt.soroban_data)
     pub soroban_data: ::std::option::Option<::std::vec::Vec<u8>>,
     // special fields
-    // @@protoc_insertion_point(special_field:hw.trezor.messages.stellar.StellarTransactionExt.special_fields)
+    // @@protoc_insertion_point(special_field:hw.trezor.messages.stellar.StellarTxExt.special_fields)
     pub special_fields: ::protobuf::SpecialFields,
 }
 
-impl<'a> ::std::default::Default for &'a StellarTransactionExt {
-    fn default() -> &'a StellarTransactionExt {
-        <StellarTransactionExt as ::protobuf::Message>::default_instance()
+impl<'a> ::std::default::Default for &'a StellarTxExt {
+    fn default() -> &'a StellarTxExt {
+        <StellarTxExt as ::protobuf::Message>::default_instance()
     }
 }
 
-impl StellarTransactionExt {
-    pub fn new() -> StellarTransactionExt {
+impl StellarTxExt {
+    pub fn new() -> StellarTxExt {
         ::std::default::Default::default()
     }
 
@@ -10762,24 +10762,24 @@ impl StellarTransactionExt {
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
         fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
             "v",
-            |m: &StellarTransactionExt| { &m.v },
-            |m: &mut StellarTransactionExt| { &mut m.v },
+            |m: &StellarTxExt| { &m.v },
+            |m: &mut StellarTxExt| { &mut m.v },
         ));
         fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
             "soroban_data",
-            |m: &StellarTransactionExt| { &m.soroban_data },
-            |m: &mut StellarTransactionExt| { &mut m.soroban_data },
+            |m: &StellarTxExt| { &m.soroban_data },
+            |m: &mut StellarTxExt| { &mut m.soroban_data },
         ));
-        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StellarTransactionExt>(
-            "StellarTransactionExt",
+        ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StellarTxExt>(
+            "StellarTxExt",
             fields,
             oneofs,
         )
     }
 }
 
-impl ::protobuf::Message for StellarTransactionExt {
-    const NAME: &'static str = "StellarTransactionExt";
+impl ::protobuf::Message for StellarTxExt {
+    const NAME: &'static str = "StellarTxExt";
 
     fn is_initialized(&self) -> bool {
         if self.v.is_none() {
@@ -10839,8 +10839,8 @@ impl ::protobuf::Message for StellarTransactionExt {
         &mut self.special_fields
     }
 
-    fn new() -> StellarTransactionExt {
-        StellarTransactionExt::new()
+    fn new() -> StellarTxExt {
+        StellarTxExt::new()
     }
 
     fn clear(&mut self) {
@@ -10849,8 +10849,8 @@ impl ::protobuf::Message for StellarTransactionExt {
         self.special_fields.clear();
     }
 
-    fn default_instance() -> &'static StellarTransactionExt {
-        static instance: StellarTransactionExt = StellarTransactionExt {
+    fn default_instance() -> &'static StellarTxExt {
+        static instance: StellarTxExt = StellarTxExt {
             v: ::std::option::Option::None,
             soroban_data: ::std::option::Option::None,
             special_fields: ::protobuf::SpecialFields::new(),
@@ -10859,20 +10859,20 @@ impl ::protobuf::Message for StellarTransactionExt {
     }
 }
 
-impl ::protobuf::MessageFull for StellarTransactionExt {
+impl ::protobuf::MessageFull for StellarTxExt {
     fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
         static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
-        descriptor.get(|| file_descriptor().message_by_package_relative_name("StellarTransactionExt").unwrap()).clone()
+        descriptor.get(|| file_descriptor().message_by_package_relative_name("StellarTxExt").unwrap()).clone()
     }
 }
 
-impl ::std::fmt::Display for StellarTransactionExt {
+impl ::std::fmt::Display for StellarTxExt {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         ::protobuf::text_format::fmt(self, f)
     }
 }
 
-impl ::protobuf::reflect::ProtobufValue for StellarTransactionExt {
+impl ::protobuf::reflect::ProtobufValue for StellarTxExt {
     type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
 }
 
@@ -11430,18 +11430,18 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     nOp\x12%\n\x0esource_account\x18\x01\x20\x01(\tR\rsourceAccount\x12K\n\
     \x08function\x18\x02\x20\x02(\x0b2/.hw.trezor.messages.stellar.StellarHo\
     stFunctionR\x08function\x12P\n\x04auth\x18\x03\x20\x03(\x0b2<.hw.trezor.\
-    messages.stellar.StellarSorobanAuthorizationEntryR\x04auth\"\x1e\n\x1cSt\
-    ellarTransactionExtRequest\"H\n\x15StellarTransactionExt\x12\x0c\n\x01v\
-    \x18\x01\x20\x02(\x11R\x01v\x12!\n\x0csoroban_data\x18\x02\x20\x01(\x0cR\
-    \x0bsorobanData\"\xa3\x02\n\x1fStellarSignSorobanAuthorization\x12\x1b\n\
-    \taddress_n\x18\x01\x20\x03(\rR\x08addressN\x12-\n\x12network_passphrase\
-    \x18\x02\x20\x02(\tR\x11networkPassphrase\x12\x14\n\x05nonce\x18\x03\x20\
-    \x02(\x12R\x05nonce\x12>\n\x1bsignature_expiration_ledger\x18\x04\x20\
-    \x02(\rR\x19signatureExpirationLedger\x12^\n\ninvocation\x18\x05\x20\x02\
-    (\x0b2>.hw.trezor.messages.stellar.StellarSorobanAuthorizedInvocationR\n\
-    invocation*=\n\x10StellarAssetType\x12\n\n\x06NATIVE\x10\0\x12\r\n\tALPH\
-    ANUM4\x10\x01\x12\x0e\n\nALPHANUM12\x10\x02B;\n#com.satoshilabs.trezor.l\
-    ib.protobufB\x14TrezorMessageStellar\
+    messages.stellar.StellarSorobanAuthorizationEntryR\x04auth\"\x15\n\x13St\
+    ellarTxExtRequest\"?\n\x0cStellarTxExt\x12\x0c\n\x01v\x18\x01\x20\x02(\
+    \x11R\x01v\x12!\n\x0csoroban_data\x18\x02\x20\x01(\x0cR\x0bsorobanData\"\
+    \xa3\x02\n\x1fStellarSignSorobanAuthorization\x12\x1b\n\taddress_n\x18\
+    \x01\x20\x03(\rR\x08addressN\x12-\n\x12network_passphrase\x18\x02\x20\
+    \x02(\tR\x11networkPassphrase\x12\x14\n\x05nonce\x18\x03\x20\x02(\x12R\
+    \x05nonce\x12>\n\x1bsignature_expiration_ledger\x18\x04\x20\x02(\rR\x19s\
+    ignatureExpirationLedger\x12^\n\ninvocation\x18\x05\x20\x02(\x0b2>.hw.tr\
+    ezor.messages.stellar.StellarSorobanAuthorizedInvocationR\ninvocation*=\
+    \n\x10StellarAssetType\x12\n\n\x06NATIVE\x10\0\x12\r\n\tALPHANUM4\x10\
+    \x01\x12\x0e\n\nALPHANUM12\x10\x02B;\n#com.satoshilabs.trezor.lib.protob\
+    ufB\x14TrezorMessageStellar\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file
@@ -11489,8 +11489,8 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
             messages.push(StellarSorobanCredentials::generated_message_descriptor_data());
             messages.push(StellarSorobanAuthorizationEntry::generated_message_descriptor_data());
             messages.push(StellarInvokeHostFunctionOp::generated_message_descriptor_data());
-            messages.push(StellarTransactionExtRequest::generated_message_descriptor_data());
-            messages.push(StellarTransactionExt::generated_message_descriptor_data());
+            messages.push(StellarTxExtRequest::generated_message_descriptor_data());
+            messages.push(StellarTxExt::generated_message_descriptor_data());
             messages.push(StellarSignSorobanAuthorization::generated_message_descriptor_data());
             messages.push(stellar_scval::StellarUInt128Parts::generated_message_descriptor_data());
             messages.push(stellar_scval::StellarInt128Parts::generated_message_descriptor_data());

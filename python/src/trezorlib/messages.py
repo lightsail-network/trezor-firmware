@@ -7545,11 +7545,11 @@ class StellarInvokeHostFunctionOp(protobuf.MessageType):
         self.source_account = source_account
 
 
-class StellarTransactionExtRequest(protobuf.MessageType):
+class StellarTxExtRequest(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = None
 
 
-class StellarTransactionExt(protobuf.MessageType):
+class StellarTxExt(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = None
     FIELDS = {
         1: protobuf.Field("v", "sint32", repeated=False, required=True),
