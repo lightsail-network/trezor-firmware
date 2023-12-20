@@ -254,6 +254,7 @@ def write_soroban_auth_info(
 
 
 def write_tx_ext(w: Writer, tx_ext: StellarTxExt) -> None:
+    write_int32(w, tx_ext.v)
     if tx_ext.v == 0:
         pass  # nothing to write
     elif tx_ext.v == 1:
