@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 from ubinascii import hexlify
 
+from trezor.enums import StellarHostFunctionType
 from trezor.ui.layouts import (
     confirm_address,
     confirm_amount,
@@ -10,7 +11,7 @@ from trezor.ui.layouts import (
 )
 from trezor.wire import DataError, ProcessError
 
-from ..layout import format_amount
+from ..layout import confirm_invoke_contract_args, format_amount
 
 if TYPE_CHECKING:
     from trezor.messages import (
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
         StellarClaimClaimableBalanceOp,
         StellarCreateAccountOp,
         StellarCreatePassiveSellOfferOp,
+        StellarInvokeHostFunctionOp,
         StellarManageBuyOfferOp,
         StellarManageDataOp,
         StellarManageSellOfferOp,
@@ -333,3 +335,10 @@ async def confirm_asset_issuer(asset: StellarAsset) -> None:
         f"{asset.code} issuer:",
         "confirm_asset_issuer",
     )
+
+
+async def confirm_invoke_host_function_op(op: StellarInvokeHostFunctionOp) -> None:
+    if op.function.type != StellarHostFunctionType.HOST_FUNCTION_TYPE_INVOKE_CONTRACT:
+        raise DataError(f"Stellar: unsupported host function type: {op.function.type}")
+    assert op.function.invoke_contract
+    await confirm_invoke_contract_args([], op.function.invoke_contract)

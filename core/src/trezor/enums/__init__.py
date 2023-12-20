@@ -166,7 +166,10 @@ if TYPE_CHECKING:
         StellarPathPaymentStrictSendOp = 223
         StellarClaimClaimableBalanceOp = 225
         StellarSignedTx = 230
+        StellarInvokeHostFunctionOp = 235
         StellarSignSorobanAuthorization = 238
+        StellarTxExtRequest = 239
+        StellarTxExt = 240
         CardanoGetPublicKey = 305
         CardanoPublicKey = 306
         CardanoGetAddress = 307

@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from trezor.enums import StellarMemoType
     from trezor.messages import (
         StellarAsset,
+        StellarInvokeContractArgs,
         StellarSCVal,
         StellarSorobanAuthorizedFunction,
         StellarSorobanAuthorizedInvocation,
@@ -291,6 +292,27 @@ async def require_confirm_sc_val(
         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
 
 
+async def confirm_invoke_contract_args(
+    parent_objects: list[str], invoke_contract_args: StellarInvokeContractArgs
+):
+    title = limit_str(".".join(parent_objects))
+    await layouts.confirm_properties(
+        "confirm_invoke_contract_args",
+        title,
+        (
+            (
+                "Contract Address",
+                invoke_contract_args.contract_address.address,
+            ),
+            ("Function", invoke_contract_args.function_name),
+        ),
+    )
+
+    # confirm args
+    for idx, arg in enumerate(invoke_contract_args.args):
+        await require_confirm_sc_val(parent_objects + ["args", str(idx)], arg)
+
+
 async def confirm_soroban_authorized_function(
     parent_objects: list[str], func: StellarSorobanAuthorizedFunction
 ):
@@ -300,33 +322,18 @@ async def confirm_soroban_authorized_function(
     ):
         raise DataError(f"Stellar: unsupported function type: {func.type}")
     assert func.contract_fn
-
-    title = limit_str(".".join(parent_objects)) or "root invocation"
-    await layouts.confirm_properties(
-        "confirm_soroban_auth",
-        title,
-        (
-            (
-                "Contract Address",
-                func.contract_fn.contract_address.address,
-            ),
-            ("Function", func.contract_fn.function_name),
-        ),
-    )
-
-    # confirm args
-    for idx, arg in enumerate(func.contract_fn.args):
-        await require_confirm_sc_val(parent_objects + ["args", str(idx)], arg)
+    await confirm_invoke_contract_args(parent_objects, func.contract_fn)
 
 
 async def require_confirm_soroban_authorized_invocation(
     parent_objects: list[str],
     invocation: StellarSorobanAuthorizedInvocation,
 ) -> None:
+    # TODO: remove comment; common confirm
     # confirm contract function
     await confirm_soroban_authorized_function(parent_objects, invocation.function)
 
-    title = limit_str(".".join(parent_objects)) or "root invocation"
+    title = limit_str(".".join(parent_objects))
 
     # confirm sub_invocations
     if len(invocation.sub_invocations) and await should_show_more(
@@ -360,7 +367,7 @@ async def require_confirm_soroban_auth_info(
             ("Signature Exp Ledger", str(signature_expiration_ledger)),
         ),
     )
-    await require_confirm_soroban_authorized_invocation([], invocation)
+    await require_confirm_soroban_authorized_invocation(["root"], invocation)
 
 
 async def confirm_soroban_auth_final() -> None:

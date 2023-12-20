@@ -174,7 +174,10 @@ class MessageType(IntEnum):
     StellarPathPaymentStrictSendOp = 223
     StellarClaimClaimableBalanceOp = 225
     StellarSignedTx = 230
+    StellarInvokeHostFunctionOp = 235
     StellarSignSorobanAuthorization = 238
+    StellarTxExtRequest = 239
+    StellarTxExt = 240
     CardanoGetPublicKey = 305
     CardanoPublicKey = 306
     CardanoGetAddress = 307
@@ -7526,7 +7529,7 @@ class StellarSorobanAuthorizationEntry(protobuf.MessageType):
 
 
 class StellarInvokeHostFunctionOp(protobuf.MessageType):
-    MESSAGE_WIRE_TYPE = None
+    MESSAGE_WIRE_TYPE = 235
     FIELDS = {
         1: protobuf.Field("source_account", "string", repeated=False, required=False, default=None),
         2: protobuf.Field("function", "StellarHostFunction", repeated=False, required=True),
@@ -7546,11 +7549,11 @@ class StellarInvokeHostFunctionOp(protobuf.MessageType):
 
 
 class StellarTxExtRequest(protobuf.MessageType):
-    MESSAGE_WIRE_TYPE = None
+    MESSAGE_WIRE_TYPE = 239
 
 
 class StellarTxExt(protobuf.MessageType):
-    MESSAGE_WIRE_TYPE = None
+    MESSAGE_WIRE_TYPE = 240
     FIELDS = {
         1: protobuf.Field("v", "sint32", repeated=False, required=True),
         2: protobuf.Field("soroban_data", "bytes", repeated=False, required=False, default=None),

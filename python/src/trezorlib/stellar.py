@@ -386,7 +386,7 @@ def sign_tx(
         raise exceptions.TrezorException(
             "Reached end of operations without a signature."
         ) from None
-    
+
     if isinstance(resp, messages.StellarTxExtRequest):
         resp = client.call(tx_ext)
 
