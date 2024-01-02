@@ -6232,8 +6232,6 @@ pub struct StellarSCVal {
     pub address: ::protobuf::MessageField<stellar_scval::StellarSCAddress>,
     // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarSCVal.nonce_key)
     pub nonce_key: ::std::option::Option<i64>,
-    // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarSCVal.instance)
-    pub instance: ::protobuf::MessageField<stellar_scval::StellarSCContractInstance>,
     // special fields
     // @@protoc_insertion_point(special_field:hw.trezor.messages.stellar.StellarSCVal.special_fields)
     pub special_fields: ::protobuf::SpecialFields,
@@ -6533,7 +6531,7 @@ impl StellarSCVal {
     }
 
     fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-        let mut fields = ::std::vec::Vec::with_capacity(20);
+        let mut fields = ::std::vec::Vec::with_capacity(19);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
         fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
             "type",
@@ -6630,11 +6628,6 @@ impl StellarSCVal {
             |m: &StellarSCVal| { &m.nonce_key },
             |m: &mut StellarSCVal| { &mut m.nonce_key },
         ));
-        fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, stellar_scval::StellarSCContractInstance>(
-            "instance",
-            |m: &StellarSCVal| { &m.instance },
-            |m: &mut StellarSCVal| { &mut m.instance },
-        ));
         ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StellarSCVal>(
             "StellarSCVal",
             fields,
@@ -6681,11 +6674,6 @@ impl ::protobuf::Message for StellarSCVal {
             }
         };
         for v in &self.address {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.instance {
             if !v.is_initialized() {
                 return false;
             }
@@ -6752,9 +6740,6 @@ impl ::protobuf::Message for StellarSCVal {
                 },
                 160 => {
                     self.nonce_key = ::std::option::Option::Some(is.read_sint64()?);
-                },
-                170 => {
-                    ::protobuf::rt::read_singular_message_into_field(is, &mut self.instance)?;
                 },
                 tag => {
                     ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
@@ -6832,10 +6817,6 @@ impl ::protobuf::Message for StellarSCVal {
         if let Some(v) = self.nonce_key {
             my_size += ::protobuf::rt::sint64_size(20, v);
         }
-        if let Some(v) = self.instance.as_ref() {
-            let len = v.compute_size();
-            my_size += 2 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
-        }
         my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
         self.special_fields.cached_size().set(my_size as u32);
         my_size
@@ -6899,9 +6880,6 @@ impl ::protobuf::Message for StellarSCVal {
         if let Some(v) = self.nonce_key {
             os.write_sint64(20, v)?;
         }
-        if let Some(v) = self.instance.as_ref() {
-            ::protobuf::rt::write_message_field_with_cached_size(21, v, os)?;
-        }
         os.write_unknown_fields(self.special_fields.unknown_fields())?;
         ::std::result::Result::Ok(())
     }
@@ -6938,7 +6916,6 @@ impl ::protobuf::Message for StellarSCVal {
         self.map.clear();
         self.address.clear();
         self.nonce_key = ::std::option::Option::None;
-        self.instance.clear();
         self.special_fields.clear();
     }
 
@@ -6963,7 +6940,6 @@ impl ::protobuf::Message for StellarSCVal {
             map: ::std::vec::Vec::new(),
             address: ::protobuf::MessageField::none(),
             nonce_key: ::std::option::Option::None,
-            instance: ::protobuf::MessageField::none(),
             special_fields: ::protobuf::SpecialFields::new(),
         };
         &instance
@@ -8154,272 +8130,6 @@ pub mod stellar_scval {
         }
     }
 
-    // @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarSCVal.StellarContractExecutable)
-    #[derive(PartialEq,Clone,Default,Debug)]
-    pub struct StellarContractExecutable {
-        // message fields
-        // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarSCVal.StellarContractExecutable.type)
-        pub type_: ::std::option::Option<::protobuf::EnumOrUnknown<stellar_contract_executable::StellarContractExecutableType>>,
-        // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarSCVal.StellarContractExecutable.wasm_hash)
-        pub wasm_hash: ::std::option::Option<::std::vec::Vec<u8>>,
-        // special fields
-        // @@protoc_insertion_point(special_field:hw.trezor.messages.stellar.StellarSCVal.StellarContractExecutable.special_fields)
-        pub special_fields: ::protobuf::SpecialFields,
-    }
-
-    impl<'a> ::std::default::Default for &'a StellarContractExecutable {
-        fn default() -> &'a StellarContractExecutable {
-            <StellarContractExecutable as ::protobuf::Message>::default_instance()
-        }
-    }
-
-    impl StellarContractExecutable {
-        pub fn new() -> StellarContractExecutable {
-            ::std::default::Default::default()
-        }
-
-        // required .hw.trezor.messages.stellar.StellarSCVal.StellarContractExecutable.StellarContractExecutableType type = 1;
-
-        pub fn type_(&self) -> stellar_contract_executable::StellarContractExecutableType {
-            match self.type_ {
-                Some(e) => e.enum_value_or(stellar_contract_executable::StellarContractExecutableType::CONTRACT_EXECUTABLE_WASM),
-                None => stellar_contract_executable::StellarContractExecutableType::CONTRACT_EXECUTABLE_WASM,
-            }
-        }
-
-        pub fn clear_type_(&mut self) {
-            self.type_ = ::std::option::Option::None;
-        }
-
-        pub fn has_type(&self) -> bool {
-            self.type_.is_some()
-        }
-
-        // Param is passed by value, moved
-        pub fn set_type(&mut self, v: stellar_contract_executable::StellarContractExecutableType) {
-            self.type_ = ::std::option::Option::Some(::protobuf::EnumOrUnknown::new(v));
-        }
-
-        // optional bytes wasm_hash = 2;
-
-        pub fn wasm_hash(&self) -> &[u8] {
-            match self.wasm_hash.as_ref() {
-                Some(v) => v,
-                None => &[],
-            }
-        }
-
-        pub fn clear_wasm_hash(&mut self) {
-            self.wasm_hash = ::std::option::Option::None;
-        }
-
-        pub fn has_wasm_hash(&self) -> bool {
-            self.wasm_hash.is_some()
-        }
-
-        // Param is passed by value, moved
-        pub fn set_wasm_hash(&mut self, v: ::std::vec::Vec<u8>) {
-            self.wasm_hash = ::std::option::Option::Some(v);
-        }
-
-        // Mutable pointer to the field.
-        // If field is not initialized, it is initialized with default value first.
-        pub fn mut_wasm_hash(&mut self) -> &mut ::std::vec::Vec<u8> {
-            if self.wasm_hash.is_none() {
-                self.wasm_hash = ::std::option::Option::Some(::std::vec::Vec::new());
-            }
-            self.wasm_hash.as_mut().unwrap()
-        }
-
-        // Take field
-        pub fn take_wasm_hash(&mut self) -> ::std::vec::Vec<u8> {
-            self.wasm_hash.take().unwrap_or_else(|| ::std::vec::Vec::new())
-        }
-
-        pub(in super) fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-            let mut fields = ::std::vec::Vec::with_capacity(2);
-            let mut oneofs = ::std::vec::Vec::with_capacity(0);
-            fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
-                "type",
-                |m: &StellarContractExecutable| { &m.type_ },
-                |m: &mut StellarContractExecutable| { &mut m.type_ },
-            ));
-            fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
-                "wasm_hash",
-                |m: &StellarContractExecutable| { &m.wasm_hash },
-                |m: &mut StellarContractExecutable| { &mut m.wasm_hash },
-            ));
-            ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StellarContractExecutable>(
-                "StellarSCVal.StellarContractExecutable",
-                fields,
-                oneofs,
-            )
-        }
-    }
-
-    impl ::protobuf::Message for StellarContractExecutable {
-        const NAME: &'static str = "StellarContractExecutable";
-
-        fn is_initialized(&self) -> bool {
-            if self.type_.is_none() {
-                return false;
-            }
-            true
-        }
-
-        fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
-            while let Some(tag) = is.read_raw_tag_or_eof()? {
-                match tag {
-                    8 => {
-                        self.type_ = ::std::option::Option::Some(is.read_enum_or_unknown()?);
-                    },
-                    18 => {
-                        self.wasm_hash = ::std::option::Option::Some(is.read_bytes()?);
-                    },
-                    tag => {
-                        ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
-                    },
-                };
-            }
-            ::std::result::Result::Ok(())
-        }
-
-        // Compute sizes of nested messages
-        #[allow(unused_variables)]
-        fn compute_size(&self) -> u64 {
-            let mut my_size = 0;
-            if let Some(v) = self.type_ {
-                my_size += ::protobuf::rt::int32_size(1, v.value());
-            }
-            if let Some(v) = self.wasm_hash.as_ref() {
-                my_size += ::protobuf::rt::bytes_size(2, &v);
-            }
-            my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
-            self.special_fields.cached_size().set(my_size as u32);
-            my_size
-        }
-
-        fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
-            if let Some(v) = self.type_ {
-                os.write_enum(1, ::protobuf::EnumOrUnknown::value(&v))?;
-            }
-            if let Some(v) = self.wasm_hash.as_ref() {
-                os.write_bytes(2, v)?;
-            }
-            os.write_unknown_fields(self.special_fields.unknown_fields())?;
-            ::std::result::Result::Ok(())
-        }
-
-        fn special_fields(&self) -> &::protobuf::SpecialFields {
-            &self.special_fields
-        }
-
-        fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
-            &mut self.special_fields
-        }
-
-        fn new() -> StellarContractExecutable {
-            StellarContractExecutable::new()
-        }
-
-        fn clear(&mut self) {
-            self.type_ = ::std::option::Option::None;
-            self.wasm_hash = ::std::option::Option::None;
-            self.special_fields.clear();
-        }
-
-        fn default_instance() -> &'static StellarContractExecutable {
-            static instance: StellarContractExecutable = StellarContractExecutable {
-                type_: ::std::option::Option::None,
-                wasm_hash: ::std::option::Option::None,
-                special_fields: ::protobuf::SpecialFields::new(),
-            };
-            &instance
-        }
-    }
-
-    impl ::protobuf::MessageFull for StellarContractExecutable {
-        fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
-            static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
-            descriptor.get(|| super::file_descriptor().message_by_package_relative_name("StellarSCVal.StellarContractExecutable").unwrap()).clone()
-        }
-    }
-
-    impl ::std::fmt::Display for StellarContractExecutable {
-        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-            ::protobuf::text_format::fmt(self, f)
-        }
-    }
-
-    impl ::protobuf::reflect::ProtobufValue for StellarContractExecutable {
-        type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
-    }
-
-    /// Nested message and enums of message `StellarContractExecutable`
-    pub mod stellar_contract_executable {
-        #[derive(Clone,Copy,PartialEq,Eq,Debug,Hash)]
-        // @@protoc_insertion_point(enum:hw.trezor.messages.stellar.StellarSCVal.StellarContractExecutable.StellarContractExecutableType)
-        pub enum StellarContractExecutableType {
-            // @@protoc_insertion_point(enum_value:hw.trezor.messages.stellar.StellarSCVal.StellarContractExecutable.StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM)
-            CONTRACT_EXECUTABLE_WASM = 0,
-            // @@protoc_insertion_point(enum_value:hw.trezor.messages.stellar.StellarSCVal.StellarContractExecutable.StellarContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET)
-            CONTRACT_EXECUTABLE_STELLAR_ASSET = 1,
-        }
-
-        impl ::protobuf::Enum for StellarContractExecutableType {
-            const NAME: &'static str = "StellarContractExecutableType";
-
-            fn value(&self) -> i32 {
-                *self as i32
-            }
-
-            fn from_i32(value: i32) -> ::std::option::Option<StellarContractExecutableType> {
-                match value {
-                    0 => ::std::option::Option::Some(StellarContractExecutableType::CONTRACT_EXECUTABLE_WASM),
-                    1 => ::std::option::Option::Some(StellarContractExecutableType::CONTRACT_EXECUTABLE_STELLAR_ASSET),
-                    _ => ::std::option::Option::None
-                }
-            }
-
-            fn from_str(str: &str) -> ::std::option::Option<StellarContractExecutableType> {
-                match str {
-                    "CONTRACT_EXECUTABLE_WASM" => ::std::option::Option::Some(StellarContractExecutableType::CONTRACT_EXECUTABLE_WASM),
-                    "CONTRACT_EXECUTABLE_STELLAR_ASSET" => ::std::option::Option::Some(StellarContractExecutableType::CONTRACT_EXECUTABLE_STELLAR_ASSET),
-                    _ => ::std::option::Option::None
-                }
-            }
-
-            const VALUES: &'static [StellarContractExecutableType] = &[
-                StellarContractExecutableType::CONTRACT_EXECUTABLE_WASM,
-                StellarContractExecutableType::CONTRACT_EXECUTABLE_STELLAR_ASSET,
-            ];
-        }
-
-        impl ::protobuf::EnumFull for StellarContractExecutableType {
-            fn enum_descriptor() -> ::protobuf::reflect::EnumDescriptor {
-                static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::EnumDescriptor> = ::protobuf::rt::Lazy::new();
-                descriptor.get(|| super::super::file_descriptor().enum_by_package_relative_name("StellarSCVal.StellarContractExecutable.StellarContractExecutableType").unwrap()).clone()
-            }
-
-            fn descriptor(&self) -> ::protobuf::reflect::EnumValueDescriptor {
-                let index = *self as usize;
-                Self::enum_descriptor().value_by_index(index)
-            }
-        }
-
-        impl ::std::default::Default for StellarContractExecutableType {
-            fn default() -> Self {
-                StellarContractExecutableType::CONTRACT_EXECUTABLE_WASM
-            }
-        }
-
-        impl StellarContractExecutableType {
-            pub(in super::super) fn generated_enum_descriptor_data() -> ::protobuf::reflect::GeneratedEnumDescriptorData {
-                ::protobuf::reflect::GeneratedEnumDescriptorData::new::<StellarContractExecutableType>("StellarSCVal.StellarContractExecutable.StellarContractExecutableType")
-            }
-        }
-    }
-
     // @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarSCVal.StellarSCValMapEntry)
     #[derive(PartialEq,Clone,Default,Debug)]
     pub struct StellarSCValMapEntry {
@@ -8569,161 +8279,6 @@ pub mod stellar_scval {
     }
 
     impl ::protobuf::reflect::ProtobufValue for StellarSCValMapEntry {
-        type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
-    }
-
-    // @@protoc_insertion_point(message:hw.trezor.messages.stellar.StellarSCVal.StellarSCContractInstance)
-    #[derive(PartialEq,Clone,Default,Debug)]
-    pub struct StellarSCContractInstance {
-        // message fields
-        // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarSCVal.StellarSCContractInstance.executable)
-        pub executable: ::protobuf::MessageField<StellarContractExecutable>,
-        // @@protoc_insertion_point(field:hw.trezor.messages.stellar.StellarSCVal.StellarSCContractInstance.storage)
-        pub storage: ::std::vec::Vec<StellarSCValMapEntry>,
-        // special fields
-        // @@protoc_insertion_point(special_field:hw.trezor.messages.stellar.StellarSCVal.StellarSCContractInstance.special_fields)
-        pub special_fields: ::protobuf::SpecialFields,
-    }
-
-    impl<'a> ::std::default::Default for &'a StellarSCContractInstance {
-        fn default() -> &'a StellarSCContractInstance {
-            <StellarSCContractInstance as ::protobuf::Message>::default_instance()
-        }
-    }
-
-    impl StellarSCContractInstance {
-        pub fn new() -> StellarSCContractInstance {
-            ::std::default::Default::default()
-        }
-
-        pub(in super) fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-            let mut fields = ::std::vec::Vec::with_capacity(2);
-            let mut oneofs = ::std::vec::Vec::with_capacity(0);
-            fields.push(::protobuf::reflect::rt::v2::make_message_field_accessor::<_, StellarContractExecutable>(
-                "executable",
-                |m: &StellarSCContractInstance| { &m.executable },
-                |m: &mut StellarSCContractInstance| { &mut m.executable },
-            ));
-            fields.push(::protobuf::reflect::rt::v2::make_vec_simpler_accessor::<_, _>(
-                "storage",
-                |m: &StellarSCContractInstance| { &m.storage },
-                |m: &mut StellarSCContractInstance| { &mut m.storage },
-            ));
-            ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<StellarSCContractInstance>(
-                "StellarSCVal.StellarSCContractInstance",
-                fields,
-                oneofs,
-            )
-        }
-    }
-
-    impl ::protobuf::Message for StellarSCContractInstance {
-        const NAME: &'static str = "StellarSCContractInstance";
-
-        fn is_initialized(&self) -> bool {
-            if self.executable.is_none() {
-                return false;
-            }
-            for v in &self.executable {
-                if !v.is_initialized() {
-                    return false;
-                }
-            };
-            for v in &self.storage {
-                if !v.is_initialized() {
-                    return false;
-                }
-            };
-            true
-        }
-
-        fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::Result<()> {
-            while let Some(tag) = is.read_raw_tag_or_eof()? {
-                match tag {
-                    10 => {
-                        ::protobuf::rt::read_singular_message_into_field(is, &mut self.executable)?;
-                    },
-                    18 => {
-                        self.storage.push(is.read_message()?);
-                    },
-                    tag => {
-                        ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
-                    },
-                };
-            }
-            ::std::result::Result::Ok(())
-        }
-
-        // Compute sizes of nested messages
-        #[allow(unused_variables)]
-        fn compute_size(&self) -> u64 {
-            let mut my_size = 0;
-            if let Some(v) = self.executable.as_ref() {
-                let len = v.compute_size();
-                my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
-            }
-            for value in &self.storage {
-                let len = value.compute_size();
-                my_size += 1 + ::protobuf::rt::compute_raw_varint64_size(len) + len;
-            };
-            my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
-            self.special_fields.cached_size().set(my_size as u32);
-            my_size
-        }
-
-        fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::Result<()> {
-            if let Some(v) = self.executable.as_ref() {
-                ::protobuf::rt::write_message_field_with_cached_size(1, v, os)?;
-            }
-            for v in &self.storage {
-                ::protobuf::rt::write_message_field_with_cached_size(2, v, os)?;
-            };
-            os.write_unknown_fields(self.special_fields.unknown_fields())?;
-            ::std::result::Result::Ok(())
-        }
-
-        fn special_fields(&self) -> &::protobuf::SpecialFields {
-            &self.special_fields
-        }
-
-        fn mut_special_fields(&mut self) -> &mut ::protobuf::SpecialFields {
-            &mut self.special_fields
-        }
-
-        fn new() -> StellarSCContractInstance {
-            StellarSCContractInstance::new()
-        }
-
-        fn clear(&mut self) {
-            self.executable.clear();
-            self.storage.clear();
-            self.special_fields.clear();
-        }
-
-        fn default_instance() -> &'static StellarSCContractInstance {
-            static instance: StellarSCContractInstance = StellarSCContractInstance {
-                executable: ::protobuf::MessageField::none(),
-                storage: ::std::vec::Vec::new(),
-                special_fields: ::protobuf::SpecialFields::new(),
-            };
-            &instance
-        }
-    }
-
-    impl ::protobuf::MessageFull for StellarSCContractInstance {
-        fn descriptor() -> ::protobuf::reflect::MessageDescriptor {
-            static descriptor: ::protobuf::rt::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::rt::Lazy::new();
-            descriptor.get(|| super::file_descriptor().message_by_package_relative_name("StellarSCVal.StellarSCContractInstance").unwrap()).clone()
-        }
-    }
-
-    impl ::std::fmt::Display for StellarSCContractInstance {
-        fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-            ::protobuf::text_format::fmt(self, f)
-        }
-    }
-
-    impl ::protobuf::reflect::ProtobufValue for StellarSCContractInstance {
         type RuntimeType = ::protobuf::reflect::rt::RuntimeTypeMessage<Self>;
     }
 
@@ -11331,7 +10886,7 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     _account\x18\x01\x20\x01(\tR\rsourceAccount\x12\x1d\n\nbalance_id\x18\
     \x02\x20\x02(\x0cR\tbalanceId\"N\n\x0fStellarSignedTx\x12\x1d\n\npublic_\
     key\x18\x01\x20\x02(\x0cR\tpublicKey\x12\x1c\n\tsignature\x18\x02\x20\
-    \x02(\x0cR\tsignature\"\x93\x14\n\x0cStellarSCVal\x12M\n\x04type\x18\x01\
+    \x02(\x0cR\tsignature\"\xc7\x0f\n\x0cStellarSCVal\x12M\n\x04type\x18\x01\
     \x20\x02(\x0e29.hw.trezor.messages.stellar.StellarSCVal.StellarSCValType\
     R\x04type\x12\x0c\n\x01b\x18\x02\x20\x01(\x08R\x01b\x12\x10\n\x03u32\x18\
     \x04\x20\x01(\rR\x03u32\x12\x10\n\x03i32\x18\x05\x20\x01(\x11R\x03i32\
@@ -11350,98 +10905,87 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \x12O\n\x03map\x18\x12\x20\x03(\x0b2=.hw.trezor.messages.stellar.Stellar\
     SCVal.StellarSCValMapEntryR\x03map\x12S\n\x07address\x18\x13\x20\x01(\
     \x0b29.hw.trezor.messages.stellar.StellarSCVal.StellarSCAddressR\x07addr\
-    ess\x12\x1b\n\tnonce_key\x18\x14\x20\x01(\x12R\x08nonceKey\x12^\n\x08ins\
-    tance\x18\x15\x20\x01(\x0b2B.hw.trezor.messages.stellar.StellarSCVal.Ste\
-    llarSCContractInstanceR\x08instance\x1a5\n\x13StellarUInt128Parts\x12\
-    \x0e\n\x02hi\x18\x01\x20\x02(\x04R\x02hi\x12\x0e\n\x02lo\x18\x02\x20\x02\
-    (\x04R\x02lo\x1a4\n\x12StellarInt128Parts\x12\x0e\n\x02hi\x18\x01\x20\
-    \x02(\x12R\x02hi\x12\x0e\n\x02lo\x18\x02\x20\x02(\x04R\x02lo\x1ai\n\x13S\
-    tellarUInt256Parts\x12\x13\n\x05hi_hi\x18\x01\x20\x02(\x04R\x04hiHi\x12\
-    \x13\n\x05hi_lo\x18\x02\x20\x02(\x04R\x04hiLo\x12\x13\n\x05lo_hi\x18\x03\
-    \x20\x02(\x04R\x04loHi\x12\x13\n\x05lo_lo\x18\x04\x20\x02(\x04R\x04loLo\
-    \x1ah\n\x12StellarInt256Parts\x12\x13\n\x05hi_hi\x18\x01\x20\x02(\x12R\
-    \x04hiHi\x12\x13\n\x05hi_lo\x18\x02\x20\x02(\x04R\x04hiLo\x12\x13\n\x05l\
-    o_hi\x18\x03\x20\x02(\x04R\x04loHi\x12\x13\n\x05lo_lo\x18\x04\x20\x02(\
-    \x04R\x04loLo\x1a\xe3\x01\n\x10StellarSCAddress\x12b\n\x04type\x18\x01\
-    \x20\x02(\x0e2N.hw.trezor.messages.stellar.StellarSCVal.StellarSCAddress\
-    .StellarSCAddressTypeR\x04type\x12\x18\n\x07address\x18\x02\x20\x02(\tR\
-    \x07address\"Q\n\x14StellarSCAddressType\x12\x1b\n\x17SC_ADDRESS_TYPE_AC\
-    COUNT\x10\0\x12\x1c\n\x18SC_ADDRESS_TYPE_CONTRACT\x10\x01\x1a\x94\x02\n\
-    \x19StellarContractExecutable\x12t\n\x04type\x18\x01\x20\x02(\x0e2`.hw.t\
-    rezor.messages.stellar.StellarSCVal.StellarContractExecutable.StellarCon\
-    tractExecutableTypeR\x04type\x12\x1b\n\twasm_hash\x18\x02\x20\x01(\x0cR\
-    \x08wasmHash\"d\n\x1dStellarContractExecutableType\x12\x1c\n\x18CONTRACT\
-    _EXECUTABLE_WASM\x10\0\x12%\n!CONTRACT_EXECUTABLE_STELLAR_ASSET\x10\x01\
-    \x1a\x92\x01\n\x14StellarSCValMapEntry\x12:\n\x03key\x18\x01\x20\x01(\
-    \x0b2(.hw.trezor.messages.stellar.StellarSCValR\x03key\x12>\n\x05value\
-    \x18\x02\x20\x01(\x0b2(.hw.trezor.messages.stellar.StellarSCValR\x05valu\
-    e\x1a\xd8\x01\n\x19StellarSCContractInstance\x12b\n\nexecutable\x18\x01\
-    \x20\x02(\x0b2B.hw.trezor.messages.stellar.StellarSCVal.StellarContractE\
-    xecutableR\nexecutable\x12W\n\x07storage\x18\x02\x20\x03(\x0b2=.hw.trezo\
-    r.messages.stellar.StellarSCVal.StellarSCValMapEntryR\x07storage\"\x83\
-    \x03\n\x10StellarSCValType\x12\x0c\n\x08SCV_BOOL\x10\0\x12\x0c\n\x08SCV_\
-    VOID\x10\x01\x12\r\n\tSCV_ERROR\x10\x02\x12\x0b\n\x07SCV_U32\x10\x03\x12\
-    \x0b\n\x07SCV_I32\x10\x04\x12\x0b\n\x07SCV_U64\x10\x05\x12\x0b\n\x07SCV_\
-    I64\x10\x06\x12\x11\n\rSCV_TIMEPOINT\x10\x07\x12\x10\n\x0cSCV_DURATION\
-    \x10\x08\x12\x0c\n\x08SCV_U128\x10\t\x12\x0c\n\x08SCV_I128\x10\n\x12\x0c\
-    \n\x08SCV_U256\x10\x0b\x12\x0c\n\x08SCV_I256\x10\x0c\x12\r\n\tSCV_BYTES\
-    \x10\r\x12\x0e\n\nSCV_STRING\x10\x0e\x12\x0e\n\nSCV_SYMBOL\x10\x0f\x12\
-    \x0b\n\x07SCV_VEC\x10\x10\x12\x0b\n\x07SCV_MAP\x10\x11\x12\x0f\n\x0bSCV_\
-    ADDRESS\x10\x12\x12\x19\n\x15SCV_CONTRACT_INSTANCE\x10\x13\x12$\n\x20SCV\
-    _LEDGER_KEY_CONTRACT_INSTANCE\x10\x14\x12\x18\n\x14SCV_LEDGER_KEY_NONCE\
-    \x10\x15J\x04\x08\x03\x10\x04\"\xe4\x01\n\x19StellarInvokeContractArgs\
-    \x12d\n\x10contract_address\x18\x01\x20\x02(\x0b29.hw.trezor.messages.st\
-    ellar.StellarSCVal.StellarSCAddressR\x0fcontractAddress\x12#\n\rfunction\
-    _name\x18\x02\x20\x02(\tR\x0cfunctionName\x12<\n\x04args\x18\x03\x20\x03\
-    (\x0b2(.hw.trezor.messages.stellar.StellarSCValR\x04args\"\x8a\x03\n\x20\
-    StellarSorobanAuthorizedFunction\x12u\n\x04type\x18\x01\x20\x02(\x0e2a.h\
-    w.trezor.messages.stellar.StellarSorobanAuthorizedFunction.StellarSoroba\
-    nAuthorizedFunctionTypeR\x04type\x12V\n\x0bcontract_fn\x18\x02\x20\x01(\
-    \x0b25.hw.trezor.messages.stellar.StellarInvokeContractArgsR\ncontractFn\
-    \"\x96\x01\n$StellarSorobanAuthorizedFunctionType\x120\n,SOROBAN_AUTHORI\
-    ZED_FUNCTION_TYPE_CONTRACT_FN\x10\0\x12<\n8SOROBAN_AUTHORIZED_FUNCTION_T\
-    YPE_CREATE_CONTRACT_HOST_FN\x10\x01\"\xe7\x01\n\"StellarSorobanAuthorize\
-    dInvocation\x12X\n\x08function\x18\x01\x20\x02(\x0b2<.hw.trezor.messages\
-    .stellar.StellarSorobanAuthorizedFunctionR\x08function\x12g\n\x0fsub_inv\
-    ocations\x18\x02\x20\x03(\x0b2>.hw.trezor.messages.stellar.StellarSoroba\
-    nAuthorizedInvocationR\x0esubInvocations\"\xeb\x02\n\x13StellarHostFunct\
-    ion\x12[\n\x04type\x18\x01\x20\x02(\x0e2G.hw.trezor.messages.stellar.Ste\
-    llarHostFunction.StellarHostFunctionTypeR\x04type\x12^\n\x0finvoke_contr\
-    act\x18\x02\x20\x01(\x0b25.hw.trezor.messages.stellar.StellarInvokeContr\
-    actArgsR\x0einvokeContract\"\x96\x01\n\x17StellarHostFunctionType\x12&\n\
-    \"HOST_FUNCTION_TYPE_INVOKE_CONTRACT\x10\0\x12&\n\"HOST_FUNCTION_TYPE_CR\
-    EATE_CONTRACT\x10\x01\x12+\n'HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_WASM\x10\
-    \x02\"\x95\x02\n\x20StellarSorobanAddressCredentials\x12S\n\x07address\
-    \x18\x01\x20\x02(\x0b29.hw.trezor.messages.stellar.StellarSCVal.StellarS\
-    CAddressR\x07address\x12\x14\n\x05nonce\x18\x02\x20\x02(\x12R\x05nonce\
-    \x12>\n\x1bsignature_expiration_ledger\x18\x03\x20\x02(\rR\x19signatureE\
-    xpirationLedger\x12F\n\tsignature\x18\x04\x20\x02(\x0b2(.hw.trezor.messa\
-    ges.stellar.StellarSCValR\tsignature\"\xc6\x02\n\x19StellarSorobanCreden\
-    tials\x12g\n\x04type\x18\x01\x20\x02(\x0e2S.hw.trezor.messages.stellar.S\
-    tellarSorobanCredentials.StellarSorobanCredentialsTypeR\x04type\x12V\n\
-    \x07address\x18\x02\x20\x01(\x0b2<.hw.trezor.messages.stellar.StellarSor\
-    obanAddressCredentialsR\x07address\"h\n\x1dStellarSorobanCredentialsType\
-    \x12&\n\"SOROBAN_CREDENTIALS_SOURCE_ACCOUNT\x10\0\x12\x1f\n\x1bSOROBAN_C\
-    REDENTIALS_ADDRESS\x10\x01\"\xe4\x01\n\x20StellarSorobanAuthorizationEnt\
-    ry\x12W\n\x0bcredentials\x18\x01\x20\x02(\x0b25.hw.trezor.messages.stell\
-    ar.StellarSorobanCredentialsR\x0bcredentials\x12g\n\x0froot_invocation\
-    \x18\x02\x20\x02(\x0b2>.hw.trezor.messages.stellar.StellarSorobanAuthori\
-    zedInvocationR\x0erootInvocation\"\xe3\x01\n\x1bStellarInvokeHostFunctio\
-    nOp\x12%\n\x0esource_account\x18\x01\x20\x01(\tR\rsourceAccount\x12K\n\
-    \x08function\x18\x02\x20\x02(\x0b2/.hw.trezor.messages.stellar.StellarHo\
-    stFunctionR\x08function\x12P\n\x04auth\x18\x03\x20\x03(\x0b2<.hw.trezor.\
-    messages.stellar.StellarSorobanAuthorizationEntryR\x04auth\"\x15\n\x13St\
-    ellarTxExtRequest\"?\n\x0cStellarTxExt\x12\x0c\n\x01v\x18\x01\x20\x02(\
-    \x11R\x01v\x12!\n\x0csoroban_data\x18\x02\x20\x01(\x0cR\x0bsorobanData\"\
-    \xa3\x02\n\x1fStellarSignSorobanAuthorization\x12\x1b\n\taddress_n\x18\
-    \x01\x20\x03(\rR\x08addressN\x12-\n\x12network_passphrase\x18\x02\x20\
-    \x02(\tR\x11networkPassphrase\x12\x14\n\x05nonce\x18\x03\x20\x02(\x12R\
-    \x05nonce\x12>\n\x1bsignature_expiration_ledger\x18\x04\x20\x02(\rR\x19s\
-    ignatureExpirationLedger\x12^\n\ninvocation\x18\x05\x20\x02(\x0b2>.hw.tr\
-    ezor.messages.stellar.StellarSorobanAuthorizedInvocationR\ninvocation*=\
-    \n\x10StellarAssetType\x12\n\n\x06NATIVE\x10\0\x12\r\n\tALPHANUM4\x10\
-    \x01\x12\x0e\n\nALPHANUM12\x10\x02B;\n#com.satoshilabs.trezor.lib.protob\
-    ufB\x14TrezorMessageStellar\
+    ess\x12\x1b\n\tnonce_key\x18\x14\x20\x01(\x12R\x08nonceKey\x1a5\n\x13Ste\
+    llarUInt128Parts\x12\x0e\n\x02hi\x18\x01\x20\x02(\x04R\x02hi\x12\x0e\n\
+    \x02lo\x18\x02\x20\x02(\x04R\x02lo\x1a4\n\x12StellarInt128Parts\x12\x0e\
+    \n\x02hi\x18\x01\x20\x02(\x12R\x02hi\x12\x0e\n\x02lo\x18\x02\x20\x02(\
+    \x04R\x02lo\x1ai\n\x13StellarUInt256Parts\x12\x13\n\x05hi_hi\x18\x01\x20\
+    \x02(\x04R\x04hiHi\x12\x13\n\x05hi_lo\x18\x02\x20\x02(\x04R\x04hiLo\x12\
+    \x13\n\x05lo_hi\x18\x03\x20\x02(\x04R\x04loHi\x12\x13\n\x05lo_lo\x18\x04\
+    \x20\x02(\x04R\x04loLo\x1ah\n\x12StellarInt256Parts\x12\x13\n\x05hi_hi\
+    \x18\x01\x20\x02(\x12R\x04hiHi\x12\x13\n\x05hi_lo\x18\x02\x20\x02(\x04R\
+    \x04hiLo\x12\x13\n\x05lo_hi\x18\x03\x20\x02(\x04R\x04loHi\x12\x13\n\x05l\
+    o_lo\x18\x04\x20\x02(\x04R\x04loLo\x1a\xe3\x01\n\x10StellarSCAddress\x12\
+    b\n\x04type\x18\x01\x20\x02(\x0e2N.hw.trezor.messages.stellar.StellarSCV\
+    al.StellarSCAddress.StellarSCAddressTypeR\x04type\x12\x18\n\x07address\
+    \x18\x02\x20\x02(\tR\x07address\"Q\n\x14StellarSCAddressType\x12\x1b\n\
+    \x17SC_ADDRESS_TYPE_ACCOUNT\x10\0\x12\x1c\n\x18SC_ADDRESS_TYPE_CONTRACT\
+    \x10\x01\x1a\x92\x01\n\x14StellarSCValMapEntry\x12:\n\x03key\x18\x01\x20\
+    \x01(\x0b2(.hw.trezor.messages.stellar.StellarSCValR\x03key\x12>\n\x05va\
+    lue\x18\x02\x20\x01(\x0b2(.hw.trezor.messages.stellar.StellarSCValR\x05v\
+    alue\"\x83\x03\n\x10StellarSCValType\x12\x0c\n\x08SCV_BOOL\x10\0\x12\x0c\
+    \n\x08SCV_VOID\x10\x01\x12\r\n\tSCV_ERROR\x10\x02\x12\x0b\n\x07SCV_U32\
+    \x10\x03\x12\x0b\n\x07SCV_I32\x10\x04\x12\x0b\n\x07SCV_U64\x10\x05\x12\
+    \x0b\n\x07SCV_I64\x10\x06\x12\x11\n\rSCV_TIMEPOINT\x10\x07\x12\x10\n\x0c\
+    SCV_DURATION\x10\x08\x12\x0c\n\x08SCV_U128\x10\t\x12\x0c\n\x08SCV_I128\
+    \x10\n\x12\x0c\n\x08SCV_U256\x10\x0b\x12\x0c\n\x08SCV_I256\x10\x0c\x12\r\
+    \n\tSCV_BYTES\x10\r\x12\x0e\n\nSCV_STRING\x10\x0e\x12\x0e\n\nSCV_SYMBOL\
+    \x10\x0f\x12\x0b\n\x07SCV_VEC\x10\x10\x12\x0b\n\x07SCV_MAP\x10\x11\x12\
+    \x0f\n\x0bSCV_ADDRESS\x10\x12\x12\x19\n\x15SCV_CONTRACT_INSTANCE\x10\x13\
+    \x12$\n\x20SCV_LEDGER_KEY_CONTRACT_INSTANCE\x10\x14\x12\x18\n\x14SCV_LED\
+    GER_KEY_NONCE\x10\x15J\x04\x08\x03\x10\x04J\x04\x08\x15\x10\x16\"\xe4\
+    \x01\n\x19StellarInvokeContractArgs\x12d\n\x10contract_address\x18\x01\
+    \x20\x02(\x0b29.hw.trezor.messages.stellar.StellarSCVal.StellarSCAddress\
+    R\x0fcontractAddress\x12#\n\rfunction_name\x18\x02\x20\x02(\tR\x0cfuncti\
+    onName\x12<\n\x04args\x18\x03\x20\x03(\x0b2(.hw.trezor.messages.stellar.\
+    StellarSCValR\x04args\"\x8a\x03\n\x20StellarSorobanAuthorizedFunction\
+    \x12u\n\x04type\x18\x01\x20\x02(\x0e2a.hw.trezor.messages.stellar.Stella\
+    rSorobanAuthorizedFunction.StellarSorobanAuthorizedFunctionTypeR\x04type\
+    \x12V\n\x0bcontract_fn\x18\x02\x20\x01(\x0b25.hw.trezor.messages.stellar\
+    .StellarInvokeContractArgsR\ncontractFn\"\x96\x01\n$StellarSorobanAuthor\
+    izedFunctionType\x120\n,SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN\x10\
+    \0\x12<\n8SOROBAN_AUTHORIZED_FUNCTION_TYPE_CREATE_CONTRACT_HOST_FN\x10\
+    \x01\"\xe7\x01\n\"StellarSorobanAuthorizedInvocation\x12X\n\x08function\
+    \x18\x01\x20\x02(\x0b2<.hw.trezor.messages.stellar.StellarSorobanAuthori\
+    zedFunctionR\x08function\x12g\n\x0fsub_invocations\x18\x02\x20\x03(\x0b2\
+    >.hw.trezor.messages.stellar.StellarSorobanAuthorizedInvocationR\x0esubI\
+    nvocations\"\xeb\x02\n\x13StellarHostFunction\x12[\n\x04type\x18\x01\x20\
+    \x02(\x0e2G.hw.trezor.messages.stellar.StellarHostFunction.StellarHostFu\
+    nctionTypeR\x04type\x12^\n\x0finvoke_contract\x18\x02\x20\x01(\x0b25.hw.\
+    trezor.messages.stellar.StellarInvokeContractArgsR\x0einvokeContract\"\
+    \x96\x01\n\x17StellarHostFunctionType\x12&\n\"HOST_FUNCTION_TYPE_INVOKE_\
+    CONTRACT\x10\0\x12&\n\"HOST_FUNCTION_TYPE_CREATE_CONTRACT\x10\x01\x12+\n\
+    'HOST_FUNCTION_TYPE_UPLOAD_CONTRACT_WASM\x10\x02\"\x95\x02\n\x20StellarS\
+    orobanAddressCredentials\x12S\n\x07address\x18\x01\x20\x02(\x0b29.hw.tre\
+    zor.messages.stellar.StellarSCVal.StellarSCAddressR\x07address\x12\x14\n\
+    \x05nonce\x18\x02\x20\x02(\x12R\x05nonce\x12>\n\x1bsignature_expiration_\
+    ledger\x18\x03\x20\x02(\rR\x19signatureExpirationLedger\x12F\n\tsignatur\
+    e\x18\x04\x20\x02(\x0b2(.hw.trezor.messages.stellar.StellarSCValR\tsigna\
+    ture\"\xc6\x02\n\x19StellarSorobanCredentials\x12g\n\x04type\x18\x01\x20\
+    \x02(\x0e2S.hw.trezor.messages.stellar.StellarSorobanCredentials.Stellar\
+    SorobanCredentialsTypeR\x04type\x12V\n\x07address\x18\x02\x20\x01(\x0b2<\
+    .hw.trezor.messages.stellar.StellarSorobanAddressCredentialsR\x07address\
+    \"h\n\x1dStellarSorobanCredentialsType\x12&\n\"SOROBAN_CREDENTIALS_SOURC\
+    E_ACCOUNT\x10\0\x12\x1f\n\x1bSOROBAN_CREDENTIALS_ADDRESS\x10\x01\"\xe4\
+    \x01\n\x20StellarSorobanAuthorizationEntry\x12W\n\x0bcredentials\x18\x01\
+    \x20\x02(\x0b25.hw.trezor.messages.stellar.StellarSorobanCredentialsR\
+    \x0bcredentials\x12g\n\x0froot_invocation\x18\x02\x20\x02(\x0b2>.hw.trez\
+    or.messages.stellar.StellarSorobanAuthorizedInvocationR\x0erootInvocatio\
+    n\"\xe3\x01\n\x1bStellarInvokeHostFunctionOp\x12%\n\x0esource_account\
+    \x18\x01\x20\x01(\tR\rsourceAccount\x12K\n\x08function\x18\x02\x20\x02(\
+    \x0b2/.hw.trezor.messages.stellar.StellarHostFunctionR\x08function\x12P\
+    \n\x04auth\x18\x03\x20\x03(\x0b2<.hw.trezor.messages.stellar.StellarSoro\
+    banAuthorizationEntryR\x04auth\"\x15\n\x13StellarTxExtRequest\"?\n\x0cSt\
+    ellarTxExt\x12\x0c\n\x01v\x18\x01\x20\x02(\x11R\x01v\x12!\n\x0csoroban_d\
+    ata\x18\x02\x20\x01(\x0cR\x0bsorobanData\"\xa3\x02\n\x1fStellarSignSorob\
+    anAuthorization\x12\x1b\n\taddress_n\x18\x01\x20\x03(\rR\x08addressN\x12\
+    -\n\x12network_passphrase\x18\x02\x20\x02(\tR\x11networkPassphrase\x12\
+    \x14\n\x05nonce\x18\x03\x20\x02(\x12R\x05nonce\x12>\n\x1bsignature_expir\
+    ation_ledger\x18\x04\x20\x02(\rR\x19signatureExpirationLedger\x12^\n\nin\
+    vocation\x18\x05\x20\x02(\x0b2>.hw.trezor.messages.stellar.StellarSoroba\
+    nAuthorizedInvocationR\ninvocation*=\n\x10StellarAssetType\x12\n\n\x06NA\
+    TIVE\x10\0\x12\r\n\tALPHANUM4\x10\x01\x12\x0e\n\nALPHANUM12\x10\x02B;\n#\
+    com.satoshilabs.trezor.lib.protobufB\x14TrezorMessageStellar\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file
@@ -11459,7 +11003,7 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
     file_descriptor.get(|| {
         let generated_file_descriptor = generated_file_descriptor_lazy.get(|| {
             let mut deps = ::std::vec::Vec::with_capacity(0);
-            let mut messages = ::std::vec::Vec::with_capacity(40);
+            let mut messages = ::std::vec::Vec::with_capacity(38);
             messages.push(StellarAsset::generated_message_descriptor_data());
             messages.push(StellarGetAddress::generated_message_descriptor_data());
             messages.push(StellarAddress::generated_message_descriptor_data());
@@ -11497,16 +11041,13 @@ pub fn file_descriptor() -> &'static ::protobuf::reflect::FileDescriptor {
             messages.push(stellar_scval::StellarUInt256Parts::generated_message_descriptor_data());
             messages.push(stellar_scval::StellarInt256Parts::generated_message_descriptor_data());
             messages.push(stellar_scval::StellarSCAddress::generated_message_descriptor_data());
-            messages.push(stellar_scval::StellarContractExecutable::generated_message_descriptor_data());
             messages.push(stellar_scval::StellarSCValMapEntry::generated_message_descriptor_data());
-            messages.push(stellar_scval::StellarSCContractInstance::generated_message_descriptor_data());
-            let mut enums = ::std::vec::Vec::with_capacity(9);
+            let mut enums = ::std::vec::Vec::with_capacity(8);
             enums.push(StellarAssetType::generated_enum_descriptor_data());
             enums.push(stellar_sign_tx::StellarMemoType::generated_enum_descriptor_data());
             enums.push(stellar_set_options_op::StellarSignerType::generated_enum_descriptor_data());
             enums.push(stellar_scval::StellarSCValType::generated_enum_descriptor_data());
             enums.push(stellar_scval::stellar_scaddress::StellarSCAddressType::generated_enum_descriptor_data());
-            enums.push(stellar_scval::stellar_contract_executable::StellarContractExecutableType::generated_enum_descriptor_data());
             enums.push(stellar_soroban_authorized_function::StellarSorobanAuthorizedFunctionType::generated_enum_descriptor_data());
             enums.push(stellar_host_function::StellarHostFunctionType::generated_enum_descriptor_data());
             enums.push(stellar_soroban_credentials::StellarSorobanCredentialsType::generated_enum_descriptor_data());

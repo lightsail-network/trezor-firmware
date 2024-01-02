@@ -614,11 +614,6 @@ class StellarSCAddressType(IntEnum):
     SC_ADDRESS_TYPE_CONTRACT = 1
 
 
-class StellarContractExecutableType(IntEnum):
-    CONTRACT_EXECUTABLE_WASM = 0
-    CONTRACT_EXECUTABLE_STELLAR_ASSET = 1
-
-
 class StellarSorobanAuthorizedFunctionType(IntEnum):
     SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN = 0
     SOROBAN_AUTHORIZED_FUNCTION_TYPE_CREATE_CONTRACT_HOST_FN = 1
@@ -7351,7 +7346,6 @@ class StellarSCVal(protobuf.MessageType):
         18: protobuf.Field("map", "StellarSCValMapEntry", repeated=True, required=False, default=None),
         19: protobuf.Field("address", "StellarSCAddress", repeated=False, required=False, default=None),
         20: protobuf.Field("nonce_key", "sint64", repeated=False, required=False, default=None),
-        21: protobuf.Field("instance", "StellarSCContractInstance", repeated=False, required=False, default=None),
     }
 
     def __init__(
@@ -7376,7 +7370,6 @@ class StellarSCVal(protobuf.MessageType):
         symbol: Optional["str"] = None,
         address: Optional["StellarSCAddress"] = None,
         nonce_key: Optional["int"] = None,
-        instance: Optional["StellarSCContractInstance"] = None,
     ) -> None:
         self.vec: Sequence["StellarSCVal"] = vec if vec is not None else []
         self.map: Sequence["StellarSCValMapEntry"] = map if map is not None else []
@@ -7397,7 +7390,6 @@ class StellarSCVal(protobuf.MessageType):
         self.symbol = symbol
         self.address = address
         self.nonce_key = nonce_key
-        self.instance = instance
 
 
 class StellarInvokeContractArgs(protobuf.MessageType):
@@ -7692,23 +7684,6 @@ class StellarSCAddress(protobuf.MessageType):
         self.address = address
 
 
-class StellarContractExecutable(protobuf.MessageType):
-    MESSAGE_WIRE_TYPE = None
-    FIELDS = {
-        1: protobuf.Field("type", "StellarContractExecutableType", repeated=False, required=True),
-        2: protobuf.Field("wasm_hash", "bytes", repeated=False, required=False, default=None),
-    }
-
-    def __init__(
-        self,
-        *,
-        type: "StellarContractExecutableType",
-        wasm_hash: Optional["bytes"] = None,
-    ) -> None:
-        self.type = type
-        self.wasm_hash = wasm_hash
-
-
 class StellarSCValMapEntry(protobuf.MessageType):
     MESSAGE_WIRE_TYPE = None
     FIELDS = {
@@ -7724,23 +7699,6 @@ class StellarSCValMapEntry(protobuf.MessageType):
     ) -> None:
         self.key = key
         self.value = value
-
-
-class StellarSCContractInstance(protobuf.MessageType):
-    MESSAGE_WIRE_TYPE = None
-    FIELDS = {
-        1: protobuf.Field("executable", "StellarContractExecutable", repeated=False, required=True),
-        2: protobuf.Field("storage", "StellarSCValMapEntry", repeated=True, required=False, default=None),
-    }
-
-    def __init__(
-        self,
-        *,
-        executable: "StellarContractExecutable",
-        storage: Optional[Sequence["StellarSCValMapEntry"]] = None,
-    ) -> None:
-        self.storage: Sequence["StellarSCValMapEntry"] = storage if storage is not None else []
-        self.executable = executable
 
 
 class TezosGetAddress(protobuf.MessageType):

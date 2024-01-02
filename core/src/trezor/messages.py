@@ -57,7 +57,6 @@ if TYPE_CHECKING:
     from trezor.enums import SafetyCheckLevel  # noqa: F401
     from trezor.enums import SdProtectOperationType  # noqa: F401
     from trezor.enums import StellarAssetType  # noqa: F401
-    from trezor.enums import StellarContractExecutableType  # noqa: F401
     from trezor.enums import StellarHostFunctionType  # noqa: F401
     from trezor.enums import StellarMemoType  # noqa: F401
     from trezor.enums import StellarSCAddressType  # noqa: F401
@@ -5765,7 +5764,6 @@ if TYPE_CHECKING:
         map: "list[StellarSCValMapEntry]"
         address: "StellarSCAddress | None"
         nonce_key: "int | None"
-        instance: "StellarSCContractInstance | None"
 
         def __init__(
             self,
@@ -5789,7 +5787,6 @@ if TYPE_CHECKING:
             symbol: "str | None" = None,
             address: "StellarSCAddress | None" = None,
             nonce_key: "int | None" = None,
-            instance: "StellarSCContractInstance | None" = None,
         ) -> None:
             pass
 
@@ -6065,22 +6062,6 @@ if TYPE_CHECKING:
         def is_type_of(cls, msg: Any) -> TypeGuard["StellarSCAddress"]:
             return isinstance(msg, cls)
 
-    class StellarContractExecutable(protobuf.MessageType):
-        type: "StellarContractExecutableType"
-        wasm_hash: "bytes | None"
-
-        def __init__(
-            self,
-            *,
-            type: "StellarContractExecutableType",
-            wasm_hash: "bytes | None" = None,
-        ) -> None:
-            pass
-
-        @classmethod
-        def is_type_of(cls, msg: Any) -> TypeGuard["StellarContractExecutable"]:
-            return isinstance(msg, cls)
-
     class StellarSCValMapEntry(protobuf.MessageType):
         key: "StellarSCVal | None"
         value: "StellarSCVal | None"
@@ -6095,22 +6076,6 @@ if TYPE_CHECKING:
 
         @classmethod
         def is_type_of(cls, msg: Any) -> TypeGuard["StellarSCValMapEntry"]:
-            return isinstance(msg, cls)
-
-    class StellarSCContractInstance(protobuf.MessageType):
-        executable: "StellarContractExecutable"
-        storage: "list[StellarSCValMapEntry]"
-
-        def __init__(
-            self,
-            *,
-            executable: "StellarContractExecutable",
-            storage: "list[StellarSCValMapEntry] | None" = None,
-        ) -> None:
-            pass
-
-        @classmethod
-        def is_type_of(cls, msg: Any) -> TypeGuard["StellarSCContractInstance"]:
             return isinstance(msg, cls)
 
     class TezosGetAddress(protobuf.MessageType):

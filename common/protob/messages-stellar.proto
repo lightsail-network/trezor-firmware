@@ -309,7 +309,7 @@ message StellarSCVal {
     repeated StellarSCValMapEntry map = 18; // SCV_MAP
     optional StellarSCAddress address = 19; // SCV_ADDRESS
     optional sint64 nonce_key = 20; // SCV_LEDGER_KEY_NONCE
-    optional StellarSCContractInstance instance = 21; // SCV_CONTRACT_INSTANCE
+    reserved 21; // SCV_CONTRACT_INSTANCE, not supported yet
 
     message StellarUInt128Parts {
         required uint64 hi = 1;
@@ -349,11 +349,6 @@ message StellarSCVal {
     message StellarSCValMapEntry {
         optional StellarSCVal key = 1;
         optional StellarSCVal value = 2;
-    }
-
-    message StellarSCContractInstance {
-        required StellarContractExecutable executable = 1;
-        repeated StellarSCValMapEntry storage = 2;
     }
 
     enum StellarSCValType {
