@@ -346,17 +346,6 @@ message StellarSCVal {
         };
     }
 
-    message StellarContractExecutable {
-        required StellarContractExecutableType type = 1;
-        optional bytes wasm_hash = 2;
-
-        enum StellarContractExecutableType
-        {
-            CONTRACT_EXECUTABLE_WASM = 0;
-            CONTRACT_EXECUTABLE_STELLAR_ASSET = 1;
-        };
-    }
-
     message StellarSCValMapEntry {
         optional StellarSCVal key = 1;
         optional StellarSCVal value = 2;

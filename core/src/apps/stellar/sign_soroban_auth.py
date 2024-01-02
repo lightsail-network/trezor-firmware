@@ -33,7 +33,7 @@ async def sign_soroban_auth(
     address = helpers.address_from_public_key(pubkey)
 
     # confirm init
-    await layout.require_confirm_init(address, msg.network_passphrase, False)
+    await layout.require_confirm_init(address, msg.network_passphrase, True)
 
     # confirm auth info
     await layout.confirm_soroban_auth_info(

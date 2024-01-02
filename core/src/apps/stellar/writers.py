@@ -97,8 +97,7 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
         write_bool(w, val.b)
     elif val.type == StellarSCValType.SCV_VOID:
         pass  # nothing to write
-    elif val.type == StellarSCValType.SCV_ERROR:
-        raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
+    # SCV_ERROR NOT SUPPORTED
     elif val.type == StellarSCValType.SCV_U32:
         assert val.u32 is not None
         write_uint32(w, val.u32)
@@ -167,35 +166,7 @@ def write_sc_val(w: Writer, val: StellarSCVal) -> None:
     elif val.type == StellarSCValType.SCV_ADDRESS:
         assert val.address
         write_sc_address(w, val.address)
-    elif val.type == StellarSCValType.SCV_CONTRACT_INSTANCE:
-        assert val.instance
-        write_uint32(w, val.instance.executable.type)
-        if (
-            val.instance.executable.type
-            == StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM
-        ):
-            assert val.instance.executable
-            assert val.instance.executable.wasm_hash
-            write_bytes_fixed(w, val.instance.executable.wasm_hash, 32)
-        elif (
-            val.instance.executable.type
-            == StellarContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET
-        ):
-            pass  # nothing to write
-        else:
-            raise DataError(
-                f"Stellar: Unsupported executable type: {val.instance.executable.type}"
-            )
-        if val.instance.storage:
-            write_bool(w, True)
-            write_uint32(w, len(val.instance.storage))
-            for item in val.instance.storage:
-                assert item.key
-                assert item.value
-                write_sc_val(w, item.key)
-                write_sc_val(w, item.value)
-        else:
-            write_bool(w, False)
+    # SCV_CONTRACT_INSTANCE NOT SUPPORTED
     elif val.type == StellarSCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE:
         pass  # nothing to write
     elif val.type == StellarSCValType.SCV_LEDGER_KEY_NONCE:

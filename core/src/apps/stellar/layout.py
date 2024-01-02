@@ -138,48 +138,49 @@ async def confirm_sc_val(
     parent_objects: list[str],
     val: StellarSCVal,
 ) -> None:
+    br_type = "confirm_sc_val"
     title = limit_str(".".join(parent_objects))
 
-    async def confirm_simple_sc_val(data_type: str, data: str) -> None:
-        await layouts.confirm_properties(
-            "confirm_sc_val",
-            title,
-            (("val type:", data_type), ("val:", data)),
-        )
+    async def confirm_value(val: str, val_type: str) -> None:
+        await layouts.confirm_value(title, val, val_type, br_type)
 
     if val.type == StellarSCValType.SCV_BOOL:
-        await confirm_simple_sc_val("bool", "true" if val.b else "false")
+        await confirm_value("true" if val.b else "false", "bool")
     elif val.type == StellarSCValType.SCV_VOID:
-        await confirm_simple_sc_val("void", "[no content]")
-    elif val.type == StellarSCValType.SCV_ERROR:
-        raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
+        await confirm_value("[no content]", "void")
+    # SCV_ERROR NOT SUPPORTED
     elif val.type == StellarSCValType.SCV_U32:
-        # TODO: format number
-        await confirm_simple_sc_val("uint32", str(val.u32))
+        assert val.u32 is not None
+        await confirm_value(strings.format_amount(val.u32, 0), "u32")
     elif val.type == StellarSCValType.SCV_I32:
-        await confirm_simple_sc_val("int32", str(val.i32))
+        assert val.i32 is not None
+        await confirm_value(strings.format_amount(val.i32, 0), "i32")
     elif val.type == StellarSCValType.SCV_U64:
-        await confirm_simple_sc_val("uint64", str(val.u64))
+        assert val.u64 is not None
+        await confirm_value(strings.format_amount(val.u64, 0), "u64")
     elif val.type == StellarSCValType.SCV_I64:
-        await confirm_simple_sc_val("int64", str(val.i64))
+        assert val.i64 is not None
+        await confirm_value(strings.format_amount(val.i64, 0), "i64")
     elif val.type == StellarSCValType.SCV_TIMEPOINT:
-        await confirm_simple_sc_val("timepoint", str(val.timepoint))
+        assert val.timepoint is not None
+        await confirm_value(strings.format_timestamp(val.timepoint), "timepoint")
     elif val.type == StellarSCValType.SCV_DURATION:
-        await confirm_simple_sc_val("duration", str(val.duration))
+        assert val.duration is not None
+        await confirm_value(strings.format_duration_ms(val.duration * 1000), "duration")
     elif val.type == StellarSCValType.SCV_U128:
         assert val.u128
         value_bytes = helpers.int_to_bytes(val.u128.hi, 8) + helpers.int_to_bytes(
             val.u128.lo, 8
         )
         v = helpers.bytes_to_int(value_bytes)
-        await confirm_simple_sc_val("uint128", str(v))
+        await confirm_value(strings.format_amount(v, 0), "u128")
     elif val.type == StellarSCValType.SCV_I128:
         assert val.i128
         value_bytes = helpers.int_to_bytes(val.i128.hi, 8, True) + helpers.int_to_bytes(
             val.i128.lo, 8
         )
         v = helpers.bytes_to_int(value_bytes, True)
-        await confirm_simple_sc_val("int128", str(v))
+        await confirm_value(strings.format_amount(v, 0), "i128")
     elif val.type == StellarSCValType.SCV_U256:
         assert val.u256
         value_bytes = (
@@ -189,7 +190,7 @@ async def confirm_sc_val(
             + helpers.int_to_bytes(val.u256.lo_lo, 8)
         )
         v = helpers.bytes_to_int(value_bytes)
-        await confirm_simple_sc_val("uint256", str(v))
+        await confirm_value(strings.format_amount(v, 0), "u256")
     elif val.type == StellarSCValType.SCV_I256:
         assert val.i256
         value_bytes = (
@@ -199,16 +200,16 @@ async def confirm_sc_val(
             + helpers.int_to_bytes(val.i256.lo_lo, 8)
         )
         v = helpers.bytes_to_int(value_bytes, True)
-        await confirm_simple_sc_val("int256", str(v))
+        await confirm_value(strings.format_amount(v, 0), "i256")
     elif val.type == StellarSCValType.SCV_BYTES:
         assert val.bytes is not None
-        await confirm_blob("confirm_sc_val", title, val.bytes, "val(bytes):")
+        await confirm_blob("confirm_sc_val", title, val.bytes, "bytes")
     elif val.type == StellarSCValType.SCV_STRING:
         assert val.string is not None
-        await confirm_simple_sc_val("string", val.string)
+        await confirm_value(val.string, "string")
     elif val.type == StellarSCValType.SCV_SYMBOL:
         assert val.symbol is not None
-        await confirm_simple_sc_val("symbol", val.symbol)
+        await confirm_value(val.symbol, "symbol")
     elif val.type == StellarSCValType.SCV_VEC:
         if await should_show_more(
             title,
@@ -232,58 +233,13 @@ async def confirm_sc_val(
                 await confirm_sc_val(parent_objects + [str(idx), "value"], item.value)
     elif val.type == StellarSCValType.SCV_ADDRESS:
         assert val.address
-        await confirm_simple_sc_val("address", val.address.address)
-    elif val.type == StellarSCValType.SCV_CONTRACT_INSTANCE:
-        assert val.instance
-        props: list[tuple[str, str]] = [("val type:", "contract instance")]
-        if (
-            val.instance.executable.type
-            == StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM
-        ):
-            assert val.instance.executable
-            assert val.instance.executable.wasm_hash
-            props.append(("executable.type", "CONTRACT_EXECUTABLE_WASM"))
-            props.append(
-                (
-                    "executable.wasm_hash",
-                    ubinascii.hexlify(val.instance.executable.wasm_hash).decode(
-                        "utf-8"
-                    ),
-                )
-            )
-            pass
-        elif (
-            val.instance.executable.type
-            == StellarContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET
-        ):
-            props.append(("executable.type", "CONTRACT_EXECUTABLE_STELLAR_ASSET"))
-            pass
-        else:
-            raise DataError(
-                f"Stellar: Unsupported executable type: {val.instance.executable.type}"
-            )
-
-        await layouts.confirm_properties("confirm_sc_val", title, props)
-
-        if await should_show_more(
-            title,
-            ((ui.NORMAL, f"{title} contains storage"),),
-            "Show full storage",
-            "should_show_storage",
-        ):
-            for idx, item in enumerate(val.instance.storage):
-                assert item.key
-                assert item.value
-                await confirm_sc_val(
-                    parent_objects + [str(idx), "storage", "key"], item.key
-                )
-                await confirm_sc_val(
-                    parent_objects + [str(idx), "storage", "value"], item.value
-                )
+        await layouts.confirm_address(title, val.address.address, "address", br_type)
+    # SCV_CONTRACT_INSTANCE NOT SUPPORTED
     elif val.type == StellarSCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE:
-        await confirm_simple_sc_val("ledger key contract instance", "[no content]")
+        await confirm_value("[no content]", "ledger key contract instance")
     elif val.type == StellarSCValType.SCV_LEDGER_KEY_NONCE:
-        await confirm_simple_sc_val("ledger key nonce", str(val.nonce_key))
+        assert val.nonce_key is not None
+        await confirm_value(strings.format_amount(val.nonce_key, 0), "ledger key nonce")
     else:
         raise DataError(f"Stellar: Unsupported SCV type: {val.type}")
 
@@ -360,7 +316,10 @@ async def confirm_soroban_auth_info(
         "Confirm Soroban Auth",
         (
             ("Nonce", str(nonce)),
-            ("Signature Exp Ledger", str(signature_expiration_ledger)),
+            (
+                "Signature Exp Ledger",
+                strings.format_amount(signature_expiration_ledger, 0),
+            ),
         ),
     )
     await confirm_soroban_authorized_invocation(["root"], invocation)
