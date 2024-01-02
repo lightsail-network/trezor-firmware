@@ -5,7 +5,6 @@ import trezor.ui.layouts as layouts
 from trezor import strings, ui
 from trezor.enums import (
     ButtonRequestType,
-    StellarContractExecutableType,
     StellarSCValType,
     StellarSorobanAuthorizedFunctionType,
 )
@@ -138,6 +137,8 @@ async def confirm_sc_val(
     parent_objects: list[str],
     val: StellarSCVal,
 ) -> None:
+    import ustruct
+
     br_type = "confirm_sc_val"
     title = limit_str(".".join(parent_objects))
 
@@ -169,36 +170,22 @@ async def confirm_sc_val(
         await confirm_value(strings.format_duration_ms(val.duration * 1000), "duration")
     elif val.type == StellarSCValType.SCV_U128:
         assert val.u128
-        value_bytes = helpers.int_to_bytes(val.u128.hi, 8) + helpers.int_to_bytes(
-            val.u128.lo, 8
-        )
+        value_bytes = ustruct.pack(">QQ", val.u128.hi, val.u128.lo)
         v = helpers.bytes_to_int(value_bytes)
         await confirm_value(strings.format_amount(v, 0), "u128")
     elif val.type == StellarSCValType.SCV_I128:
         assert val.i128
-        value_bytes = helpers.int_to_bytes(val.i128.hi, 8, True) + helpers.int_to_bytes(
-            val.i128.lo, 8
-        )
+        value_bytes = ustruct.pack(">qQ", val.i128.hi, val.i128.lo)
         v = helpers.bytes_to_int(value_bytes, True)
         await confirm_value(strings.format_amount(v, 0), "i128")
     elif val.type == StellarSCValType.SCV_U256:
         assert val.u256
-        value_bytes = (
-            helpers.int_to_bytes(val.u256.hi_hi, 8)
-            + helpers.int_to_bytes(val.u256.hi_lo, 8)
-            + helpers.int_to_bytes(val.u256.lo_hi, 8)
-            + helpers.int_to_bytes(val.u256.lo_lo, 8)
-        )
+        value_bytes = ustruct.pack(">QQQQ", val.u256.hi_hi, val.u256.hi_lo, val.u256.lo_hi, val.u256.lo_lo)
         v = helpers.bytes_to_int(value_bytes)
         await confirm_value(strings.format_amount(v, 0), "u256")
     elif val.type == StellarSCValType.SCV_I256:
         assert val.i256
-        value_bytes = (
-            helpers.int_to_bytes(val.i256.hi_hi, 8, True)
-            + helpers.int_to_bytes(val.i256.hi_lo, 8)
-            + helpers.int_to_bytes(val.i256.lo_hi, 8)
-            + helpers.int_to_bytes(val.i256.lo_lo, 8)
-        )
+        value_bytes = ustruct.pack(">qQQQ", val.i256.hi_hi, val.i256.hi_lo, val.i256.lo_hi, val.i256.lo_lo)
         v = helpers.bytes_to_int(value_bytes, True)
         await confirm_value(strings.format_amount(v, 0), "i256")
     elif val.type == StellarSCValType.SCV_BYTES:

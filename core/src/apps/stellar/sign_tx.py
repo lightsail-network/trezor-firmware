@@ -121,7 +121,7 @@ async def sign_tx(msg: StellarSignTx, keychain: Keychain) -> StellarSignedTx:
             raise DataError("Stellar: Invalid transaction extension")
     else:
         # In order to maintain compatibility with the old version of JS SDK,
-        # if v == 0, we do not send a request.
+        # if v == 0, we do not send StellarTxExtRequest.
         tx_ext = StellarTxExt(v=0)
     writers.write_tx_ext(w, tx_ext)
     # ---------------------------------

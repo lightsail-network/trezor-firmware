@@ -107,8 +107,6 @@ trezor.enums.DebugSwipeDirection
 import trezor.enums.DebugSwipeDirection
 trezor.enums.DecredStakingSpendType
 import trezor.enums.DecredStakingSpendType
-trezor.enums.DemoDe
-import trezor.enums.DemoDe
 trezor.enums.FailureType
 import trezor.enums.FailureType
 trezor.enums.HomescreenFormat
@@ -417,8 +415,6 @@ if not utils.BITCOIN_ONLY:
     import trezor.enums.NEMSupplyChangeType
     trezor.enums.StellarAssetType
     import trezor.enums.StellarAssetType
-    trezor.enums.StellarContractExecutableType
-    import trezor.enums.StellarContractExecutableType
     trezor.enums.StellarHostFunctionType
     import trezor.enums.StellarHostFunctionType
     trezor.enums.StellarMemoType

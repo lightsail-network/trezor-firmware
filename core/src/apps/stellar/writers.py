@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 from trezor.crypto.hashlib import sha256
 from trezor.enums import (
-    StellarContractExecutableType,
     StellarSCAddressType,
     StellarSCValType,
     StellarSorobanAuthorizedFunctionType,

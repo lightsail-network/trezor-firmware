@@ -72,42 +72,11 @@ def _crc16_checksum(data: bytes) -> bytes:
     return ustruct.pack("<H", crc & 0xFFFF)
 
 
-def bytes_to_int(data: bytes, signed: bool = False, bigendian: bool = True) -> int:
-    """Converts bytes to int"""
-    if signed:
-        # MicroPython doesn't support signed int.from_bytes
-        # so we have to do it manually
-        n = 0
-        for b in data:
-            n <<= 8
-            n |= b
-        if bigendian:
-            if n & (1 << (len(data) * 8 - 1)):
-                n -= 1 << (len(data) * 8)
-        else:
-            if n & 1:
-                n -= 1 << (len(data) * 8)
-        return n
-    else:
-        return int.from_bytes(data, "big" if bigendian else "little")
-
-
-def int_to_bytes(
-    n: int, length: int, signed: bool = False, bigendian: bool = True
-) -> bytes:
-    """Converts int to bytes"""
-    if signed:
-        # MicroPython doesn't support signed int.to_bytes
-        # so we have to do it manually
-        if n < 0:
-            n += 1 << (length * 8)
-        data = bytearray(length)
-        for i in range(length):
-            if bigendian:
-                data[length - i - 1] = n & 0xFF
-            else:
-                data[i] = n & 0xFF
-            n >>= 8
-        return bytes(data)
-    else:
-        return n.to_bytes(length, "big" if bigendian else "little")
+def bytes_to_int(data: bytes, signed: bool = False) -> int:
+    """Converts bytes to int (big endian)"""
+    num = 0
+    for byte in data:
+        num = (num << 8) + byte
+    if signed and (data[0] & 0x80):
+        num -= 1 << (8 * len(data))
+    return num
