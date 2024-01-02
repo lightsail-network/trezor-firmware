@@ -433,8 +433,6 @@ def _read_sc_val(val: "SCVal") -> messages.StellarSCVal:
         return messages.StellarSCVal(type=messages.StellarSCValType.SCV_BOOL, b=val.b)
     elif val.type == SCValType.SCV_VOID:
         return messages.StellarSCVal(type=messages.StellarSCValType.SCV_VOID)
-    # elif val.type == SCValType.SCV_ERROR:
-    #     pass  # Not supported yet
     elif val.type == SCValType.SCV_U32:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_U32, u32=val.u32.uint32
@@ -537,38 +535,6 @@ def _read_sc_val(val: "SCVal") -> messages.StellarSCVal:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_LEDGER_KEY_NONCE,
             nonce_key=val.nonce_key.nonce.int64,
-        )
-    elif val.type == SCValType.SCV_CONTRACT_INSTANCE:
-        if (
-            val.instance.executable.type
-            == messages.StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM
-        ):
-            executable = messages.StellarContractExecutable(
-                type=messages.StellarContractExecutableType.CONTRACT_EXECUTABLE_WASM,
-                wasm_hash=val.instance.executable.wasm_hash.hash,
-            )
-        elif (
-            val.instance.executable.type
-            == messages.StellarContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET
-        ):
-            executable = messages.StellarContractExecutable(
-                type=messages.StellarContractExecutableType.CONTRACT_EXECUTABLE_STELLAR_ASSET,
-            )
-        else:
-            raise ValueError(
-                f"Unsupported executable type: {val.instance.executable.type}"
-            )
-        return messages.StellarSCVal(
-            type=messages.StellarSCValType.SCV_CONTRACT_INSTANCE,
-            instance=messages.StellarSCContractInstance(
-                executable=executable,
-                storage=[
-                    messages.StellarSCValMapEntry(
-                        key=_read_sc_val(k), value=_read_sc_val(v)
-                    )
-                    for k, v in val.instance.storage.sc_map
-                ],
-            ),
         )
     else:
         raise ValueError(f"Unsupported SCVal type: {val.type}")

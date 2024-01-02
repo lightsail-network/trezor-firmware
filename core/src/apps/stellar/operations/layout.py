@@ -358,14 +358,14 @@ async def confirm_soroban_credentials(
         await confirm_metadata(
             "confirm_soroban_credentials",
             title,
-            "Authorization needs to be done using the source account",
+            "Authorize using the source account",
         )
     elif credentials.type == StellarSorobanCredentialsType.SOROBAN_CREDENTIALS_ADDRESS:
         assert credentials.address
         await confirm_metadata(
             "confirm_soroban_credentials",
             title,
-            "Authorization is required using {}",
+            "Authorize using {}",
             credentials.address.address.address,
         )
     else:
