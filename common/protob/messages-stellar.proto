@@ -288,6 +288,9 @@ message StellarSignedTx {
     required bytes signature = 2;   // signature suitable for sending to the Stellar network
 }
 
+/**
+ * @embed
+ */
 message StellarSCVal {
     required StellarSCValType type = 1;
     optional bool b = 2; // SCV_VOID
@@ -377,12 +380,18 @@ message StellarSCVal {
     }
 }
 
+/**
+ * @embed
+ */
 message StellarInvokeContractArgs {
     required StellarSCVal.StellarSCAddress contract_address = 1;
     required string function_name = 2;
     repeated StellarSCVal args = 3;
 }
 
+/**
+ * @embed
+ */
 message StellarSorobanAuthorizedFunction {
     required StellarSorobanAuthorizedFunctionType type = 1;
     optional StellarInvokeContractArgs contract_fn = 2;
@@ -393,11 +402,17 @@ message StellarSorobanAuthorizedFunction {
     }
 }
 
+/**
+ * @embed
+ */
 message StellarSorobanAuthorizedInvocation {
     required StellarSorobanAuthorizedFunction function = 1;
     repeated StellarSorobanAuthorizedInvocation sub_invocations = 2;
 }
 
+/**
+ * @embed
+ */
 message StellarHostFunction {
     required StellarHostFunctionType type = 1;
     optional StellarInvokeContractArgs invoke_contract = 2;
@@ -410,6 +425,9 @@ message StellarHostFunction {
     }
 }
 
+/**
+ * @embed
+ */
 message StellarSorobanAddressCredentials {
     required StellarSCVal.StellarSCAddress address = 1;
     required sint64 nonce = 2;
@@ -417,6 +435,9 @@ message StellarSorobanAddressCredentials {
     required StellarSCVal signature = 4;
 }
 
+/**
+ * @embed
+ */
 message StellarSorobanCredentials {
     required StellarSorobanCredentialsType type = 1;
     optional StellarSorobanAddressCredentials address = 2;
@@ -428,6 +449,9 @@ message StellarSorobanCredentials {
     };
 }
 
+/**
+ * @embed
+ */
 message StellarSorobanAuthorizationEntry {
     required StellarSorobanCredentials credentials = 1;
     required StellarSorobanAuthorizedInvocation root_invocation = 2;
