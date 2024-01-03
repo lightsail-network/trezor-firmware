@@ -74,25 +74,9 @@ try:
         TextMemo,
         TransactionEnvelope,
         TrustLineEntryFlag,
+        xdr,
     )
-    from stellar_sdk.address import AddressType as StellarAddressType
-    from stellar_sdk.xdr.host_function import HostFunction
-    from stellar_sdk.xdr.host_function_type import HostFunctionType
-    from stellar_sdk.xdr.invoke_contract_args import InvokeContractArgs
-    from stellar_sdk.xdr.sc_address import SCAddress
-    from stellar_sdk.xdr.sc_val import SCVal
-    from stellar_sdk.xdr.sc_val_type import SCValType
-    from stellar_sdk.xdr.soroban_address_credentials import SorobanAddressCredentials
-    from stellar_sdk.xdr.soroban_authorization_entry import SorobanAuthorizationEntry
-    from stellar_sdk.xdr.soroban_authorized_function import SorobanAuthorizedFunction
-    from stellar_sdk.xdr.soroban_authorized_function_type import (
-        SorobanAuthorizedFunctionType,
-    )
-    from stellar_sdk.xdr.soroban_authorized_invocation import (
-        SorobanAuthorizedInvocation,
-    )
-    from stellar_sdk.xdr.soroban_credentials import SorobanCredentials
-    from stellar_sdk.xdr.soroban_credentials_type import SorobanCredentialsType
+    from stellar_sdk.address import AddressType
 
     HAVE_STELLAR_SDK = True
     DEFAULT_NETWORK_PASSPHRASE = Network.PUBLIC_NETWORK_PASSPHRASE
@@ -417,63 +401,63 @@ def sign_tx(
     return resp
 
 
-def _read_sc_address(address: "SCAddress") -> messages.StellarSCAddress:
+def _read_sc_address(address: "xdr.SCAddress") -> messages.StellarSCAddress:
     addr = StellarAddress.from_xdr_sc_address(address)
-    if addr.type == StellarAddressType.ACCOUNT:
+    if addr.type == AddressType.ACCOUNT:
         address_type = messages.StellarSCAddressType.SC_ADDRESS_TYPE_ACCOUNT
-    elif addr.type == StellarAddressType.CONTRACT:
+    elif addr.type == AddressType.CONTRACT:
         address_type = messages.StellarSCAddressType.SC_ADDRESS_TYPE_CONTRACT
     else:
         raise ValueError(f"Unsupported address type: {addr.type}")
     return messages.StellarSCAddress(type=address_type, address=addr.address)
 
 
-def _read_sc_val(val: "SCVal") -> messages.StellarSCVal:
-    if val.type == SCValType.SCV_BOOL:
+def _read_sc_val(val: "xdr.SCVal") -> messages.StellarSCVal:
+    if val.type == xdr.SCValType.SCV_BOOL:
         return messages.StellarSCVal(type=messages.StellarSCValType.SCV_BOOL, b=val.b)
-    elif val.type == SCValType.SCV_VOID:
+    elif val.type == xdr.SCValType.SCV_VOID:
         return messages.StellarSCVal(type=messages.StellarSCValType.SCV_VOID)
-    elif val.type == SCValType.SCV_U32:
+    elif val.type == xdr.SCValType.SCV_U32:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_U32, u32=val.u32.uint32
         )
-    elif val.type == SCValType.SCV_I32:
+    elif val.type == xdr.SCValType.SCV_I32:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_I32, i32=val.i32.int32
         )
-    elif val.type == SCValType.SCV_U64:
+    elif val.type == xdr.SCValType.SCV_U64:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_U64, u64=val.u64.uint64
         )
-    elif val.type == SCValType.SCV_I64:
+    elif val.type == xdr.SCValType.SCV_I64:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_I64, i64=val.i64.int64
         )
-    elif val.type == SCValType.SCV_TIMEPOINT:
+    elif val.type == xdr.SCValType.SCV_TIMEPOINT:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_TIMEPOINT,
             timepoint=val.timepoint.time_point.uint64,
         )
-    elif val.type == SCValType.SCV_DURATION:
+    elif val.type == xdr.SCValType.SCV_DURATION:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_DURATION,
             duration=val.duration.duration.uint64,
         )
-    elif val.type == SCValType.SCV_U128:
+    elif val.type == xdr.SCValType.SCV_U128:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_U128,
             u128=messages.StellarUInt128Parts(
                 hi=val.u128.hi.uint64, lo=val.u128.lo.uint64
             ),
         )
-    elif val.type == SCValType.SCV_I128:
+    elif val.type == xdr.SCValType.SCV_I128:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_I128,
             i128=messages.StellarInt128Parts(
                 hi=val.i128.hi.int64, lo=val.i128.lo.uint64
             ),
         )
-    elif val.type == SCValType.SCV_U256:
+    elif val.type == xdr.SCValType.SCV_U256:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_U256,
             u256=messages.StellarUInt256Parts(
@@ -483,7 +467,7 @@ def _read_sc_val(val: "SCVal") -> messages.StellarSCVal:
                 lo_lo=val.u256.lo_lo.uint64,
             ),
         )
-    elif val.type == SCValType.SCV_I256:
+    elif val.type == xdr.SCValType.SCV_I256:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_I256,
             i256=messages.StellarInt256Parts(
@@ -493,26 +477,26 @@ def _read_sc_val(val: "SCVal") -> messages.StellarSCVal:
                 lo_lo=val.i256.lo_lo.uint64,
             ),
         )
-    elif val.type == SCValType.SCV_BYTES:
+    elif val.type == xdr.SCValType.SCV_BYTES:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_BYTES, bytes=val.bytes.sc_bytes
         )
-    elif val.type == SCValType.SCV_STRING:
+    elif val.type == xdr.SCValType.SCV_STRING:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_STRING,
             string=val.str.sc_string.decode("utf-8"),
         )
-    elif val.type == SCValType.SCV_SYMBOL:
+    elif val.type == xdr.SCValType.SCV_SYMBOL:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_SYMBOL,
             symbol=val.sym.sc_symbol.decode("utf-8"),
         )
-    elif val.type == SCValType.SCV_VEC:
+    elif val.type == xdr.SCValType.SCV_VEC:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_VEC,
             vec=[_read_sc_val(v) for v in val.vec.sc_vec],
         )
-    elif val.type == SCValType.SCV_MAP:
+    elif val.type == xdr.SCValType.SCV_MAP:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_MAP,
             map=[
@@ -522,16 +506,16 @@ def _read_sc_val(val: "SCVal") -> messages.StellarSCVal:
                 for item in val.map.sc_map
             ],
         )
-    elif val.type == SCValType.SCV_ADDRESS:
+    elif val.type == xdr.SCValType.SCV_ADDRESS:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_ADDRESS,
             address=_read_sc_address(val.address),
         )
-    elif val.type == SCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE:
+    elif val.type == xdr.SCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_LEDGER_KEY_CONTRACT_INSTANCE
         )
-    elif val.type == SCValType.SCV_LEDGER_KEY_NONCE:
+    elif val.type == xdr.SCValType.SCV_LEDGER_KEY_NONCE:
         return messages.StellarSCVal(
             type=messages.StellarSCValType.SCV_LEDGER_KEY_NONCE,
             nonce_key=val.nonce_key.nonce.int64,
@@ -541,7 +525,7 @@ def _read_sc_val(val: "SCVal") -> messages.StellarSCVal:
 
 
 def _read_invoke_contract_args(
-    data: "InvokeContractArgs",
+    data: "xdr.InvokeContractArgs",
 ) -> messages.StellarInvokeContractArgs:
     return messages.StellarInvokeContractArgs(
         contract_address=_read_sc_address(data.contract_address),
@@ -551,11 +535,11 @@ def _read_invoke_contract_args(
 
 
 def _read_authorized_function(
-    function: "SorobanAuthorizedFunction",
+    function: "xdr.SorobanAuthorizedFunction",
 ) -> messages.StellarSorobanAuthorizedFunction:
     if (
         function.type
-        == SorobanAuthorizedFunctionType.SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN
+        == xdr.SorobanAuthorizedFunctionType.SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN
     ):
         return messages.StellarSorobanAuthorizedFunction(
             type=messages.StellarSorobanAuthorizedFunctionType.SOROBAN_AUTHORIZED_FUNCTION_TYPE_CONTRACT_FN,
@@ -566,7 +550,7 @@ def _read_authorized_function(
 
 
 def _read_address_credentials(
-    address_credentials: "SorobanAddressCredentials",
+    address_credentials: "xdr.SorobanAddressCredentials",
 ) -> messages.StellarSorobanAddressCredentials:
     return messages.StellarSorobanAddressCredentials(
         address=_read_sc_address(address_credentials.address),
@@ -577,13 +561,16 @@ def _read_address_credentials(
 
 
 def _read_credentials(
-    credentials: "SorobanCredentials",
+    credentials: "xdr.SorobanCredentials",
 ) -> messages.StellarSorobanCredentials:
-    if credentials.type == SorobanCredentialsType.SOROBAN_CREDENTIALS_SOURCE_ACCOUNT:
+    if (
+        credentials.type
+        == xdr.SorobanCredentialsType.SOROBAN_CREDENTIALS_SOURCE_ACCOUNT
+    ):
         return messages.StellarSorobanCredentials(
             type=messages.StellarSorobanCredentialsType.SOROBAN_CREDENTIALS_SOURCE_ACCOUNT
         )
-    elif credentials.type == SorobanCredentialsType.SOROBAN_CREDENTIALS_ADDRESS:
+    elif credentials.type == xdr.SorobanCredentialsType.SOROBAN_CREDENTIALS_ADDRESS:
         return messages.StellarSorobanCredentials(
             type=messages.StellarSorobanCredentialsType.SOROBAN_CREDENTIALS_ADDRESS,
             address=_read_address_credentials(credentials.address),
@@ -593,7 +580,7 @@ def _read_credentials(
 
 
 def _read_authorization_entry(
-    entry: "SorobanAuthorizationEntry",
+    entry: "xdr.SorobanAuthorizationEntry",
 ) -> messages.StellarSorobanAuthorizationEntry:
     return messages.StellarSorobanAuthorizationEntry(
         credentials=_read_credentials(entry.credentials),
@@ -602,9 +589,9 @@ def _read_authorization_entry(
 
 
 def _read_host_function(
-    host_function: "HostFunction",
+    host_function: "xdr.HostFunction",
 ) -> messages.StellarHostFunction:
-    if host_function.type != HostFunctionType.HOST_FUNCTION_TYPE_INVOKE_CONTRACT:
+    if host_function.type != xdr.HostFunctionType.HOST_FUNCTION_TYPE_INVOKE_CONTRACT:
         raise ValueError(f"Unsupported host function type: {host_function.type}")
 
     return messages.StellarHostFunction(
@@ -614,7 +601,7 @@ def _read_host_function(
 
 
 def from_authorized_invocation(
-    invocation: "SorobanAuthorizedInvocation",
+    invocation: "xdr.SorobanAuthorizedInvocation",
 ) -> messages.StellarSorobanAuthorizedInvocation:
     return messages.StellarSorobanAuthorizedInvocation(
         function=_read_authorized_function(invocation.function),
